@@ -1,0 +1,105 @@
+{
+    "components": {
+        "examples": {},
+        "headers": {},
+        "parameters": {},
+        "requestBodies": {},
+        "responses": {},
+        "schemas": {
+            "Error": {
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "stack": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "name",
+                    "message"
+                ],
+                "type": "object",
+                "additionalProperties": false
+            },
+            "Required_ChatInput_": {
+                "properties": {},
+                "type": "object",
+                "description": "Make all properties in T required"
+            },
+            "ChatCreateParams": {
+                "$ref": "#/components/schemas/Required_ChatInput_"
+            }
+        },
+        "securitySchemes": {}
+    },
+    "info": {
+        "title": "text-completion-api",
+        "version": "0.0.1",
+        "description": "A Text Completion API that predicts the next word in a given text.",
+        "license": {
+            "name": "MIT"
+        },
+        "contact": {
+            "name": "chrisyao4700 ",
+            "email": "chrisyao900908@gmail.com"
+        }
+    },
+    "openapi": "3.0.0",
+    "paths": {
+        "/v1/chat": {
+            "post": {
+                "operationId": "Create",
+                "responses": {
+                    "200": {
+                        "description": "Created Chat",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "anyOf": [
+                                        {},
+                                        {
+                                            "$ref": "#/components/schemas/Error"
+                                        }
+                                    ],
+                                    "nullable": true
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [],
+                "parameters": [],
+                "requestBody": {
+                    "description": "Body that is sent for upserting a Chat ticket",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ChatCreateParams",
+                                "description": "Body that is sent for upserting a Chat ticket"
+                            },
+                            "example": {
+                                "created_by_id": "AJFN123",
+                                "requested_for_id": "JNB123",
+                                "account_id": "MA1234",
+                                "site_id": "BCD123",
+                                "status": "OPEN",
+                                "category": "GARMIN",
+                                "requested_for_role": "PATIENT"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "servers": [
+        {
+            "url": "/"
+        }
+    ]
+}
