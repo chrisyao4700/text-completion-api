@@ -47,6 +47,7 @@ The API documentation for the Text Completion API can be found at http://<root-u
 
 ### Fine-Tuning
 The Text Completion API uses a fine-tuned language model for text prediction. The fine-tuning process involves training the language model on a large corpus of text data to make it more specialized for the task of text completion.
+
 ### Text-Davinci-003
 The Text Completion API uses the Text-Davinci-003 language model developed by OpenAI. Text-Davinci-003 is a transformer-based language model that has been fine-tuned on a large corpus of text data for the task of text completion. It provides high-quality predictions for the next word in a given text.
 
