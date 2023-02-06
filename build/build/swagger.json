@@ -6,6 +6,22 @@
         "requestBodies": {},
         "responses": {},
         "schemas": {
+            "ChatAttributes": {
+                "properties": {
+                    "title": {
+                        "type": "string"
+                    },
+                    "id": {
+                        "type": "number",
+                        "format": "double"
+                    }
+                },
+                "required": [
+                    "title",
+                    "id"
+                ],
+                "type": "object"
+            },
             "Error": {
                 "properties": {
                     "name": {
@@ -26,15 +42,148 @@
                 "additionalProperties": false
             },
             "Required_ChatInput_": {
-                "properties": {},
+                "properties": {
+                    "title": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "title"
+                ],
                 "type": "object",
                 "description": "Make all properties in T required"
             },
             "ChatCreateParams": {
                 "$ref": "#/components/schemas/Required_ChatInput_"
+            },
+            "Required_ChatAttributes_": {
+                "properties": {
+                    "id": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "title": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "id",
+                    "title"
+                ],
+                "type": "object",
+                "description": "Make all properties in T required"
+            },
+            "ChatOutput": {
+                "$ref": "#/components/schemas/Required_ChatAttributes_"
+            },
+            "LINE_ROLE": {
+                "enum": [
+                    "Human",
+                    "AI"
+                ],
+                "type": "string"
+            },
+            "Required_LineAttributes_": {
+                "properties": {
+                    "id": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "text": {
+                        "type": "string"
+                    },
+                    "role": {
+                        "$ref": "#/components/schemas/LINE_ROLE"
+                    }
+                },
+                "required": [
+                    "id",
+                    "text",
+                    "role"
+                ],
+                "type": "object",
+                "description": "Make all properties in T required"
+            },
+            "LineOutput": {
+                "$ref": "#/components/schemas/Required_LineAttributes_"
+            },
+            "ChatDetailOutput": {
+                "properties": {
+                    "lines": {
+                        "items": {
+                            "$ref": "#/components/schemas/LineOutput"
+                        },
+                        "type": "array"
+                    },
+                    "chat": {
+                        "$ref": "#/components/schemas/ChatOutput"
+                    }
+                },
+                "required": [
+                    "lines",
+                    "chat"
+                ],
+                "type": "object"
+            },
+            "LineGenerateResponse": {
+                "properties": {
+                    "error": {
+                        "type": "string"
+                    },
+                    "history": {
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array"
+                    },
+                    "text": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "history",
+                    "text"
+                ],
+                "type": "object"
+            },
+            "LineGenerateParams": {
+                "properties": {
+                    "text": {
+                        "type": "string"
+                    },
+                    "chatId": {
+                        "type": "number",
+                        "format": "double"
+                    }
+                },
+                "required": [
+                    "text",
+                    "chatId"
+                ],
+                "type": "object"
+            },
+            "ChatLinesResponse": {
+                "properties": {
+                    "lines": {
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array"
+                    }
+                },
+                "required": [
+                    "lines"
+                ],
+                "type": "object"
             }
         },
-        "securitySchemes": {}
+        "securitySchemes": {
+            "api_key": {
+                "type": "apiKey",
+                "name": "Authorization",
+                "in": "header"
+            }
+        }
     },
     "info": {
         "title": "text-completion-api",
@@ -60,6 +209,85 @@
                             "application/json": {
                                 "schema": {
                                     "anyOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ChatAttributes"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/Error"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [],
+                "parameters": [],
+                "requestBody": {
+                    "description": "Body that is sent for create a Chat",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ChatCreateParams",
+                                "description": "Body that is sent for create a Chat"
+                            },
+                            "example": {
+                                "title": "New Chat"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/chat/detail/{chatId}": {
+            "get": {
+                "operationId": "Find",
+                "responses": {
+                    "200": {
+                        "description": "Chat Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "anyOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ChatDetailOutput"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/Error"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "chatId",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        },
+        "/v1/line": {
+            "post": {
+                "operationId": "Create",
+                "responses": {
+                    "200": {
+                        "description": "Created text",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "anyOf": [
+                                        {
+                                            "$ref": "#/components/schemas/LineGenerateResponse"
+                                        },
                                         {},
                                         {
                                             "$ref": "#/components/schemas/Error"
@@ -74,26 +302,58 @@
                 "security": [],
                 "parameters": [],
                 "requestBody": {
-                    "description": "Body that is sent for upserting a Chat ticket",
+                    "description": "Body that is sent for create a Line",
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/ChatCreateParams",
-                                "description": "Body that is sent for upserting a Chat ticket"
+                                "$ref": "#/components/schemas/LineGenerateParams",
+                                "description": "Body that is sent for create a Line"
                             },
                             "example": {
-                                "created_by_id": "AJFN123",
-                                "requested_for_id": "JNB123",
-                                "account_id": "MA1234",
-                                "site_id": "BCD123",
-                                "status": "OPEN",
-                                "category": "GARMIN",
-                                "requested_for_role": "PATIENT"
+                                "text": "123",
+                                "chatId": 12
                             }
                         }
                     }
                 }
+            }
+        },
+        "/v1/line/all/{chatId}": {
+            "get": {
+                "operationId": "GetLines",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "anyOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ChatLinesResponse"
+                                        },
+                                        {},
+                                        {
+                                            "$ref": "#/components/schemas/Error"
+                                        }
+                                    ],
+                                    "nullable": true
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "chatId",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
             }
         }
     },

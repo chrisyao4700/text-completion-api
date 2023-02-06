@@ -1,22 +1,15 @@
-import { Sequelize} from 'sequelize';
+import { Sequelize } from 'sequelize';
+
 
 export const sequelizeConnection = new Sequelize({
     dialect: 'sqlite',
-    storage: 'db/cosmos-to-cosmos.db',
-    logging: false
+    storage: 'db/text-completion-api.db',
+    logging: true
 });
-
-// import { initSupportTable } from "../model/supportModel";
-
 export default class DatabaseConfig {
-    static async init() {
+    static async config() {
         try {
             await sequelizeConnection.authenticate();
-            console.log('Connected to db');
-
-            // Create support table
-            // await initSupportTable();
-
         } catch (error) {
             console.error('Unable to connect to db', error);
         }

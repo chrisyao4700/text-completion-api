@@ -3,8 +3,8 @@ A Text Completion API that predicts the next word in a given text.
 
 ## Prerequisites
 Before you begin, ensure you have the following installed:
-* Node.js
-* npm
+* [Node.js](https://nodejs.org/en/docs/)
+* [npm](https://docs.npmjs.com/)
 
 ## Getting Started
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
@@ -20,7 +20,7 @@ cd text-completion-api
 ```
 3. Install the dependencies:
 ```
-npm install 
+yarn install 
 ```
 4. Create a .env file:
 ```
@@ -50,6 +50,15 @@ The Text Completion API uses a fine-tuned language model for text prediction. Th
 
 ### Text-Davinci-003
 The Text Completion API uses the Text-Davinci-003 language model developed by OpenAI. Text-Davinci-003 is a transformer-based language model that has been fine-tuned on a large corpus of text data for the task of text completion. It provides high-quality predictions for the next word in a given text.
+
+## TODO
+* Add more test cases
+    - Increase the coverage of the test cases to ensure the API's functionality is thoroughly tested.
+    - Add test cases for the model and service to ensure they are working as expected.
+* Add API Key authentication
+    - Implement a mechanism to secure the API by adding an API Key authentication system. This will restrict unauthorized access to the API and ensure the data being passed is secure.
+    - Create an admin page where API Keys can be generated and managed. This will allow for easy management of API Keys and ensure only authorized users have access to the API.
+
 
 ## Built With
 

@@ -8,7 +8,14 @@ const runtime_1 = require("@tsoa/runtime");
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 const chat_controller_1 = require("./../src/controller/chat.controller");
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+const line_controller_1 = require("./../src/controller/line.controller");
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 const models = {
+    "ChatAttributes": {
+        "dataType": "refAlias",
+        "type": { "dataType": "nestedObjectLiteral", "nestedProperties": { "title": { "dataType": "string", "required": true }, "id": { "dataType": "double", "required": true } }, "validators": {} },
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Error": {
         "dataType": "refObject",
         "properties": {
@@ -21,12 +28,57 @@ const models = {
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Required_ChatInput_": {
         "dataType": "refAlias",
-        "type": { "dataType": "nestedObjectLiteral", "nestedProperties": {}, "validators": {} },
+        "type": { "dataType": "nestedObjectLiteral", "nestedProperties": { "title": { "dataType": "string", "required": true } }, "validators": {} },
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "ChatCreateParams": {
         "dataType": "refAlias",
         "type": { "ref": "Required_ChatInput_", "validators": {} },
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Required_ChatAttributes_": {
+        "dataType": "refAlias",
+        "type": { "dataType": "nestedObjectLiteral", "nestedProperties": { "id": { "dataType": "double", "required": true }, "title": { "dataType": "string", "required": true } }, "validators": {} },
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "ChatOutput": {
+        "dataType": "refAlias",
+        "type": { "ref": "Required_ChatAttributes_", "validators": {} },
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "LINE_ROLE": {
+        "dataType": "refEnum",
+        "enums": ["Human", "AI"],
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Required_LineAttributes_": {
+        "dataType": "refAlias",
+        "type": { "dataType": "nestedObjectLiteral", "nestedProperties": { "id": { "dataType": "double", "required": true }, "text": { "dataType": "string", "required": true }, "role": { "ref": "LINE_ROLE", "required": true } }, "validators": {} },
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "LineOutput": {
+        "dataType": "refAlias",
+        "type": { "ref": "Required_LineAttributes_", "validators": {} },
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "ChatDetailOutput": {
+        "dataType": "refAlias",
+        "type": { "dataType": "nestedObjectLiteral", "nestedProperties": { "lines": { "dataType": "array", "array": { "dataType": "refAlias", "ref": "LineOutput" }, "required": true }, "chat": { "ref": "ChatOutput", "required": true } }, "validators": {} },
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "LineGenerateResponse": {
+        "dataType": "refAlias",
+        "type": { "dataType": "nestedObjectLiteral", "nestedProperties": { "error": { "dataType": "string" }, "history": { "dataType": "array", "array": { "dataType": "string" }, "required": true }, "text": { "dataType": "string", "required": true } }, "validators": {} },
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "LineGenerateParams": {
+        "dataType": "refAlias",
+        "type": { "dataType": "nestedObjectLiteral", "nestedProperties": { "text": { "dataType": "string", "required": true }, "chatId": { "dataType": "double", "required": true } }, "validators": {} },
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "ChatLinesResponse": {
+        "dataType": "refAlias",
+        "type": { "dataType": "nestedObjectLiteral", "nestedProperties": { "lines": { "dataType": "array", "array": { "dataType": "string" }, "required": true } }, "validators": {} },
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 };
@@ -48,6 +100,57 @@ function RegisterRoutes(app) {
             const controller = new chat_controller_1.ChatController();
             const promise = controller.create.apply(controller, validatedArgs);
             promiseHandler(controller, promise, response, 200, next);
+        }
+        catch (err) {
+            return next(err);
+        }
+    });
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    app.get('/v1/chat/detail/:chatId', ...((0, runtime_1.fetchMiddlewares)(chat_controller_1.ChatController)), ...((0, runtime_1.fetchMiddlewares)(chat_controller_1.ChatController.prototype.find)), function ChatController_find(request, response, next) {
+        const args = {
+            chatId: { "in": "path", "name": "chatId", "required": true, "dataType": "string" },
+        };
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        let validatedArgs = [];
+        try {
+            validatedArgs = getValidatedArgs(args, request, response);
+            const controller = new chat_controller_1.ChatController();
+            const promise = controller.find.apply(controller, validatedArgs);
+            promiseHandler(controller, promise, response, 200, next);
+        }
+        catch (err) {
+            return next(err);
+        }
+    });
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    app.post('/v1/line', ...((0, runtime_1.fetchMiddlewares)(line_controller_1.LineController)), ...((0, runtime_1.fetchMiddlewares)(line_controller_1.LineController.prototype.create)), function LineController_create(request, response, next) {
+        const args = {
+            requestBody: { "in": "body", "name": "requestBody", "required": true, "ref": "LineGenerateParams" },
+        };
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        let validatedArgs = [];
+        try {
+            validatedArgs = getValidatedArgs(args, request, response);
+            const controller = new line_controller_1.LineController();
+            const promise = controller.create.apply(controller, validatedArgs);
+            promiseHandler(controller, promise, response, 200, next);
+        }
+        catch (err) {
+            return next(err);
+        }
+    });
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    app.get('/v1/line/all/:chatId', ...((0, runtime_1.fetchMiddlewares)(line_controller_1.LineController)), ...((0, runtime_1.fetchMiddlewares)(line_controller_1.LineController.prototype.getLines)), function LineController_getLines(request, response, next) {
+        const args = {
+            chatId: { "in": "path", "name": "chatId", "required": true, "dataType": "string" },
+        };
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        let validatedArgs = [];
+        try {
+            validatedArgs = getValidatedArgs(args, request, response);
+            const controller = new line_controller_1.LineController();
+            const promise = controller.getLines.apply(controller, validatedArgs);
+            promiseHandler(controller, promise, response, undefined, next);
         }
         catch (err) {
             return next(err);

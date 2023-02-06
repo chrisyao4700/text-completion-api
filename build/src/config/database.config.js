@@ -13,18 +13,14 @@ exports.sequelizeConnection = void 0;
 const sequelize_1 = require("sequelize");
 exports.sequelizeConnection = new sequelize_1.Sequelize({
     dialect: 'sqlite',
-    storage: 'db/cosmos-to-cosmos.db',
-    logging: false
+    storage: 'db/text-completion-api.db',
+    logging: true
 });
-// import { initSupportTable } from "../model/supportModel";
 class DatabaseConfig {
-    static init() {
+    static config() {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 yield exports.sequelizeConnection.authenticate();
-                console.log('Connected to db');
-                // Create support table
-                // await initSupportTable();
             }
             catch (error) {
                 console.error('Unable to connect to db', error);

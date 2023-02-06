@@ -4,7 +4,14 @@
     "controllerPathGlobs": ["src/**/*.controller.ts"],
     "spec": {
       "outputDirectory": "build",
-      "specVersion": 3
+      "specVersion": 3,
+      "securityDefinitions":{
+        "api_key":{
+          "type":"apiKey",
+          "name":"Authorization",
+          "in":"header"
+        }
+      }
     },
     "routes": {
       "routesDir": "build"

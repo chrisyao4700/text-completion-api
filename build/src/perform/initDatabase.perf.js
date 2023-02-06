@@ -12,11 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const chat_model_1 = __importDefault(require("../model/chat.model"));
+const database_init_1 = __importDefault(require("../config/database.init"));
 const main = (() => __awaiter(void 0, void 0, void 0, function* () {
-    const chats = yield chat_model_1.default.findAll({});
-    // console.log(chats);
-    const chat = chats[0];
-    const lines = yield chat.getLines();
-    console.log(lines);
+    yield database_init_1.default.init();
 }))();

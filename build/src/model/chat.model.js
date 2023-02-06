@@ -8,19 +8,39 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ChatExample = exports.initChatTable = void 0;
+exports.ChatExample = void 0;
 const sequelize_1 = require("sequelize");
 const database_config_1 = require("../config/database.config");
+const line_model_1 = __importDefault(require("./line.model"));
 class Chat extends sequelize_1.Model {
 }
 exports.default = Chat;
+_a = Chat;
+Chat.initChatTable = () => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        yield Chat.sync({ force: true });
+        console.log('Created Chat table');
+    }
+    catch (error) {
+        console.error(error);
+    }
+});
 Chat.init({
     id: {
         type: sequelize_1.DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true,
         unique: true
+    },
+    title: {
+        type: sequelize_1.DataTypes.STRING,
+        allowNull: false,
+        defaultValue: "New Chat"
     }
 }, {
     tableName: 'chat',
@@ -28,16 +48,9 @@ Chat.init({
     sequelize: database_config_1.sequelizeConnection,
     paranoid: true, // soft delete
 });
-const initChatTable = () => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        yield Chat.sync({ force: true });
-        console.log('Created Activity Summary table');
-    }
-    catch (error) {
-        console.error(error);
-    }
-});
-exports.initChatTable = initChatTable;
 exports.ChatExample = {
     id: 12,
+    title: "New Chat"
 };
+Chat.hasMany(line_model_1.default, { foreignKey: 'chatId' });
+line_model_1.default.belongsTo(Chat, { foreignKey: 'chatId' });

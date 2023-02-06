@@ -18,24 +18,25 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ChatController = void 0;
+exports.LineController = void 0;
 const tsoa_1 = require("tsoa");
 const responseHandler_1 = require("../util/responseHandler");
 const logger_1 = require("../util/logger");
-const chat_service_1 = require("../service/chat.service");
+const line_service_1 = require("../service/line.service");
 //   // "dev": "nodemon -x tsoa spec-and-routes",
-let ChatController = class ChatController extends tsoa_1.Controller {
+let LineController = class LineController extends tsoa_1.Controller {
     /**
      *
-     * @param requestBody Body that is sent for create a Chat
+     * @param requestBody Body that is sent for create a Line
      * @example requestBody {
-     *   "title":"New Chat"
+     * "text": "123",
+     * "chatId": 12
      * }
      */
     create(requestBody) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const createResponse = yield chat_service_1.ChatService.create(requestBody);
+                const createResponse = yield line_service_1.LineService.create(requestBody);
                 (0, responseHandler_1.setResponseCode)(this, createResponse, 200);
                 return createResponse;
             }
@@ -49,12 +50,12 @@ let ChatController = class ChatController extends tsoa_1.Controller {
             }
         });
     }
-    find(chatId) {
+    getLines(chatId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const chatDetailOutput = yield chat_service_1.ChatService.find(chatId);
-                (0, responseHandler_1.setResponseCode)(this, chatDetailOutput, 200);
-                return chatDetailOutput;
+                const chatLinesResponse = yield line_service_1.LineService.findAllChatLines(Number(chatId));
+                (0, responseHandler_1.setResponseCode)(this, chatLinesResponse, 200);
+                return chatLinesResponse;
             }
             catch (error) {
                 logger_1.Logger.error(error);
@@ -68,22 +69,15 @@ let ChatController = class ChatController extends tsoa_1.Controller {
     }
 };
 __decorate([
-    (0, tsoa_1.SuccessResponse)('200', 'Created Chat'),
+    (0, tsoa_1.SuccessResponse)('200', 'Created text'),
     (0, tsoa_1.Post)('/'),
     __param(0, (0, tsoa_1.Body)())
-], ChatController.prototype, "create", null);
+], LineController.prototype, "create", null);
 __decorate([
-    (0, tsoa_1.SuccessResponse)('200', 'Chat Found'),
-    (0, tsoa_1.Get)('/detail/{chatId}')
-    /**
-     *
-     * @param chatId ChatId is to fetch a chat
-     * @example "11"
-     */
-    ,
+    (0, tsoa_1.Get)('/all/{chatId}'),
     __param(0, (0, tsoa_1.Path)())
-], ChatController.prototype, "find", null);
-ChatController = __decorate([
-    (0, tsoa_1.Route)('v1/chat')
-], ChatController);
-exports.ChatController = ChatController;
+], LineController.prototype, "getLines", null);
+LineController = __decorate([
+    (0, tsoa_1.Route)('v1/line')
+], LineController);
+exports.LineController = LineController;

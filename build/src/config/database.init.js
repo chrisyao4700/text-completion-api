@@ -12,11 +12,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const line_model_1 = __importDefault(require("../model/line.model"));
 const chat_model_1 = __importDefault(require("../model/chat.model"));
-const main = (() => __awaiter(void 0, void 0, void 0, function* () {
-    const chats = yield chat_model_1.default.findAll({});
-    // console.log(chats);
-    const chat = chats[0];
-    const lines = yield chat.getLines();
-    console.log(lines);
-}))();
+class DatabaseConfig {
+    static init() {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                console.log('Start sync Database...');
+                yield line_model_1.default.initLineTable();
+                yield chat_model_1.default.initChatTable();
+                console.log('Finished sync tables');
+            }
+            catch (error) {
+                console.error('Unable to connect to db', error);
+            }
+        });
+    }
+}
+exports.default = DatabaseConfig;
