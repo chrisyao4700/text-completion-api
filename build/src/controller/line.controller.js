@@ -67,6 +67,23 @@ let LineController = class LineController extends tsoa_1.Controller {
             }
         });
     }
+    getDetail(lineId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const lineDetailResponse = yield line_service_1.LineService.findLineDetail(Number(lineId));
+                (0, responseHandler_1.setResponseCode)(this, lineDetailResponse, 200);
+                return lineDetailResponse;
+            }
+            catch (error) {
+                logger_1.Logger.error(error);
+                (0, responseHandler_1.setErrorCode)(this, 500);
+                return {
+                    name: 'Internal Server Error',
+                    message: 'Unable to process at this time'
+                };
+            }
+        });
+    }
 };
 __decorate([
     (0, tsoa_1.SuccessResponse)('200', 'Created text'),
@@ -77,6 +94,10 @@ __decorate([
     (0, tsoa_1.Get)('/all/{chatId}'),
     __param(0, (0, tsoa_1.Path)())
 ], LineController.prototype, "getLines", null);
+__decorate([
+    (0, tsoa_1.Get)('/detail/{lineId}'),
+    __param(0, (0, tsoa_1.Path)())
+], LineController.prototype, "getDetail", null);
 LineController = __decorate([
     (0, tsoa_1.Route)('v1/line')
 ], LineController);

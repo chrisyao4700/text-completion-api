@@ -68,7 +68,7 @@ const models = {
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "LineGenerateResponse": {
         "dataType": "refAlias",
-        "type": { "dataType": "nestedObjectLiteral", "nestedProperties": { "error": { "dataType": "string" }, "history": { "dataType": "array", "array": { "dataType": "string" }, "required": true }, "text": { "dataType": "string", "required": true } }, "validators": {} },
+        "type": { "dataType": "nestedObjectLiteral", "nestedProperties": { "error": { "dataType": "string" }, "history": { "dataType": "array", "array": { "dataType": "string" }, "required": true }, "title": { "dataType": "string", "required": true }, "text": { "dataType": "string", "required": true } }, "validators": {} },
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "LineGenerateParams": {
@@ -150,6 +150,23 @@ function RegisterRoutes(app) {
             validatedArgs = getValidatedArgs(args, request, response);
             const controller = new line_controller_1.LineController();
             const promise = controller.getLines.apply(controller, validatedArgs);
+            promiseHandler(controller, promise, response, undefined, next);
+        }
+        catch (err) {
+            return next(err);
+        }
+    });
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    app.get('/v1/line/detail/:lineId', ...((0, runtime_1.fetchMiddlewares)(line_controller_1.LineController)), ...((0, runtime_1.fetchMiddlewares)(line_controller_1.LineController.prototype.getDetail)), function LineController_getDetail(request, response, next) {
+        const args = {
+            lineId: { "in": "path", "name": "lineId", "required": true, "dataType": "string" },
+        };
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        let validatedArgs = [];
+        try {
+            validatedArgs = getValidatedArgs(args, request, response);
+            const controller = new line_controller_1.LineController();
+            const promise = controller.getDetail.apply(controller, validatedArgs);
             promiseHandler(controller, promise, response, undefined, next);
         }
         catch (err) {

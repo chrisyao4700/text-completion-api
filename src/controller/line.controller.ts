@@ -3,6 +3,7 @@ import { setErrorCode, setResponseCode } from '../util/responseHandler';
 import { Logger } from '../util/logger';
 
 import { LineService, LineGenerateParams , LineGenerateResponse, ChatLinesResponse} from '../service/line.service';
+import { LineOutput } from '../model/line.model';
 
 //   // "dev": "nodemon -x tsoa spec-and-routes",
 @Route('v1/line')
@@ -51,6 +52,23 @@ export class LineController extends Controller {
                 message: 'Unable to process at this time'
             };
         }
+    }
 
+    @Get('/detail/{lineId}')
+    public async getDetail(@Path() lineId: string): Promise<LineOutput| void | Error | null>{
+        try{
+            const lineDetailResponse = await LineService.findLineDetail(Number(lineId));
+
+            setResponseCode(this, lineDetailResponse, 200);
+
+            return lineDetailResponse;
+        }catch(error){
+            Logger.error(error);
+            setErrorCode(this, 500);
+            return {
+                name: 'Internal Server Error',
+                message: 'Unable to process at this time'
+            };
+        }
     }
 }

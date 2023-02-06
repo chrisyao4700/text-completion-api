@@ -136,12 +136,16 @@
                         },
                         "type": "array"
                     },
+                    "title": {
+                        "type": "string"
+                    },
                     "text": {
                         "type": "string"
                     }
                 },
                 "required": [
                     "history",
+                    "title",
                     "text"
                 ],
                 "type": "object"
@@ -348,6 +352,43 @@
                     {
                         "in": "path",
                         "name": "chatId",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        },
+        "/v1/line/detail/{lineId}": {
+            "get": {
+                "operationId": "GetDetail",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "anyOf": [
+                                        {
+                                            "$ref": "#/components/schemas/LineOutput"
+                                        },
+                                        {},
+                                        {
+                                            "$ref": "#/components/schemas/Error"
+                                        }
+                                    ],
+                                    "nullable": true
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "lineId",
                         "required": true,
                         "schema": {
                             "type": "string"

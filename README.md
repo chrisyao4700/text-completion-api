@@ -14,7 +14,6 @@ These instructions will get you a copy of the project up and running on your loc
 git clone https://github.com/<your-username>/text-completion-api.git 
 ```
 2. Navigate to the project directory:
-
 ```
 cd text-completion-api 
 ```
@@ -38,9 +37,37 @@ MS_TEMPLATE_API_KEY="abc"
 5. Start the API server:
 ```
 yarn tsoa:gen
-yarn start 
+yarn init-db
+yarn build
+yarn start
 ```
 This will start the API server at http://localhost:4010.
+
+
+## How to Use
+View all API Documents at http://<root-url>/docs
+
+1. To create a chat, make a POST request to "/v1/chat" endpoint.
+```
+Body {
+    "title": "New Chat"
+}
+```
+Note: if "title" is not "New Chat", the program will NOT automatically summarize the chat and create an updated title.
+
+2. Use the `chatId` from the response of step 1 and "text" as the body to make a POST request to "/v1/line" endpoint.
+```
+Body {
+    "text": "Tell me a joke",
+    "chatId": 1
+}
+```
+
+3. To view the chat info, make a GET request to "/v1/chat/detail/:chatId" endpoint, replacing ":chatId" with the actual chatId obtained from step 1.
+
+
+4. To get the pure text of lines, make a GET request to "/v1/line/all/:chatId" endpoint, replacing ":chatId" with the actual chatId obtained from step 1.
+
 
 ## API Documentation
 The API documentation for the Text Completion API can be found at http://<root-url>/docs. This documentation includes information on the API endpoint structure, request and response payloads, and API parameters. The documentation is generated using the OpenAPI specification and provides a clear and concise overview of the API functionality.
