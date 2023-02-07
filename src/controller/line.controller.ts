@@ -12,10 +12,11 @@ export class LineController extends Controller {
      *
      * @param requestBody Body that is sent for create a Line
      * @example requestBody {
-     * "text": "123",
-     * "chatId": 12
+     * "text": "How connect OpenAI with WeChat",
+     * "chatId": 1
      * }
      */
+
     @SuccessResponse('200', 'Created text')
     @Post('/')
     public async create(@Body() requestBody: LineGenerateParams): Promise<LineGenerateResponse|void | Error | null> {
@@ -34,6 +35,7 @@ export class LineController extends Controller {
             };
         }
     }
+
 
     @Get('/all/{chatId}')
     public async getLines(@Path() chatId: string): Promise<ChatLinesResponse| void | Error | null>{

@@ -5,13 +5,14 @@ export function expressAuthentication(
     securityName: string,
     scopes?: string[]
 ): Promise<any> {
-    if (securityName !== 'api_key') {
+    if (securityName !== 'BearerToken') {
         return Promise.reject({});
     }
 
     let token;
     if (request.headers && request.headers.authorization) {
         token = request.headers.authorization;
+        return Promise.resolve({});
     }
 
     if (token === process.env.MSVC_SENDBIRD_API_KEY) {

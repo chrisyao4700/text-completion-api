@@ -15,6 +15,7 @@ export class ChatController extends Controller {
      *   "title":"New Chat"
      * }
      */
+
     @SuccessResponse('200', 'Created Chat')
     @Post('/')
     public async create(@Body() requestBody: ChatCreateParams): Promise<ChatAttributes | undefined | Error> {
