@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@animal-high-tech/animal-service-auth@^1.2.7":
-  version "1.2.7"
-  resolved "https://npm.pkg.github.com/download/@animal-high-tech/animal-service-auth/1.2.7/28594e76218076314748d23ee8ea288918bf22ae#28594e76218076314748d23ee8ea288918bf22ae"
-  integrity sha512-ZuQVzNtVvfNwrMgmeOKrIrNpbbIhQDreqy0SlfdeCd93qDoTp8I0JX7AEX/WmdhB2/HnGpS6jAAKsvTu1ToAQQ==
+"@animal-high-tech/animal-service-auth@^1.2.8":
+  version "1.2.8"
+  resolved "https://npm.pkg.github.com/download/@animal-high-tech/animal-service-auth/1.2.8/cd8e53711fec128f90290755a965c7409bc5cf38#cd8e53711fec128f90290755a965c7409bc5cf38"
+  integrity sha512-S9MzssXcdYKhoMS/vVccgQo3HM4pMtwK6MR3n54p73kmV5opcudHtJohwvrA0tUc5MTbuskXosZHz618NNxt2Q==
   dependencies:
     "@types/express" "^4.17.15"
     axios "^1.2.0"

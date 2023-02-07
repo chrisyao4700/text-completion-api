@@ -27,7 +27,7 @@
         "typescript": "^4.8.4"
     },
     "dependencies": {
-        "@animal-high-tech/animal-service-auth": "^1.2.7",
+        "@animal-high-tech/animal-service-auth": "^1.2.8",
         "cls-hooked": "^4.2.2",
         "cors": "^2.8.5",
         "dotenv": "^16.0.3",
