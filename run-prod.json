@@ -1,6 +1,6 @@
 {
     "name": "text-completion-api",
-    "script": "build/src/service.js",
+    "script": "node build/src/service.js",
     "exec_mode": "cluster",
     "instances": "1",
     "autorestart": true,
