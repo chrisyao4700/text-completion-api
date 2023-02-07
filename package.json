@@ -1,7 +1,7 @@
 {
     "name": "text-completion-api",
     "description": "A Text Completion API that predicts the next word in a given text.",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "packageManager": "yarn@3.2.4",
     "scripts": {
         "dev": "nodemon",
