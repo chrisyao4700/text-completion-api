@@ -45,13 +45,18 @@ const configuration = new openai_1.Configuration({
 });
 const openai = new openai_1.OpenAIApi(configuration);
 const createTextFromPrompt = (prompt) => __awaiter(void 0, void 0, void 0, function* () {
+    // console.log('Sent out:',prompt);
     const completion = yield openai.createCompletion({
         model: `${process.env.OPEN_API_USING_MODEL || 'texdt-davinci-003'}`,
         prompt: prompt,
-        temperature: 0,
-        max_tokens: 1024,
+        temperature: 1,
+        max_tokens: 2048
     });
+    // console.log(completion.data.choices);
     const resText = `${completion.data.choices[0].text}`.split('\n').join('');
+    // console.log('Came in:', resText);
+    if (resText === '')
+        throw new Error('Cannot get response');
     return resText;
 });
 class LineService {
@@ -63,13 +68,14 @@ class LineService {
                 if (chat) {
                     /** Append previous conversation */
                     const previousLines = yield chat.getLines();
-                    const prompt = previousLines.map(line => line.text)
+                    const historyText = previousLines.map(line => `${line.role}: ${line.text}`)
                         .join('\n');
-                    const resText = yield createTextFromPrompt(`${prompt}${prompt === '' ? '' : '\n'}${text}`);
+                    const prompt = `${previousLines.length > 0 ? "Please provide response base on the chat history and the ew message\nCHAT HISTORY:\n\n" : ''}${historyText}${previousLines.length > 0 ? "\n\nNEW MESSAGE:\n" : ''}${text}`;
+                    const resText = yield createTextFromPrompt(prompt);
                     yield chat.createLine({ text, role: line_model_1.LINE_ROLE.HUMAN });
                     /* Create title */
                     if (previousLines.length >= 2 && chat.title === "New Chat") {
-                        const summary = yield createTextFromPrompt(`${prompt}\nPlease create a title based on the chat, and reply the title only.`);
+                        const summary = yield createTextFromPrompt(`${historyText}\n\nPlease create a title based on the chat, and reply the title only.`);
                         yield chat.update({ title: summary });
                     }
                     const currLines = yield chat.getLines();

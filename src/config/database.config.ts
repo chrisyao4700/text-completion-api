@@ -4,7 +4,7 @@ import { Sequelize } from 'sequelize';
 export const sequelizeConnection = new Sequelize({
     dialect: 'sqlite',
     storage: 'db/text-completion-api.db',
-    logging: true
+    logging: false
 });
 export default class DatabaseConfig {
     static async config() {

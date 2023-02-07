@@ -14,7 +14,7 @@ const sequelize_1 = require("sequelize");
 exports.sequelizeConnection = new sequelize_1.Sequelize({
     dialect: 'sqlite',
     storage: 'db/text-completion-api.db',
-    logging: true
+    logging: false
 });
 class DatabaseConfig {
     static config() {
