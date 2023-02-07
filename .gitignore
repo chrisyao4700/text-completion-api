@@ -111,4 +111,5 @@ training/jobs/*.json
 
 # Build
 build/
+.npmrc
 
