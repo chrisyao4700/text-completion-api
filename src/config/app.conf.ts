@@ -9,6 +9,7 @@ import {
 } from 'express';
 import cors = require('cors');
 require('dotenv').config();
+const sha1 = require('sha1');
 
 import { loggerMiddleware } from '../util/logger';
 
@@ -91,6 +92,28 @@ export default class ApplicationConfig {
                 next();
             }
             
+        });
+        app.get('/v1/wechat',async (req: ExRequest,res: ExResponse,next:NextFunction)=>{
+            /*Parse XML For Wechat*/
+            try
+            {
+                var token = process.env.WECHAT_TOKEN;
+                var signature = req.query.signature;
+                var nonce = req.query.nonce;
+                var timestamp = req.query.timestamp;
+                var echostr = req.query.echostr;
+                var str = [token, timestamp, nonce].sort().join('')
+                var sha = sha1(str)
+                if (sha === signature) {
+                    res.send(echostr)
+                }else{
+                    res.send('error')
+                }
+                res.send()
+            }catch(err){
+                console.log(err);
+                next();
+            }
         });
 
 

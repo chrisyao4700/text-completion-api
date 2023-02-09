@@ -5,7 +5,7 @@ import User from '../model/user.model';
 import { LINE_ROLE } from '../model/line.model';
 
 import { createTextFromPrompt } from '../util/opai';
-import { timeDiffMinutes } from '../util/util';
+import { timeDiffMinutes,wechatResponseBuilder } from '../util/util';
 export type ChatCreateParams = Required<ChatInput>;
 
 export type WechatCreateParams = {
@@ -41,18 +41,6 @@ const continueChat = async (chat: Chat, text: string): Promise<string> => {
     await chat.createLine({ text: resText, role: LINE_ROLE.AI });
     return resText;
 }
-
-const responseBuilder = (payload: WechatCreateParams, responseText: string): string => {
-    const resMessage = `<xml>
-<ToUserName><![CDATA[${payload.userId}]]></ToUserName>
-<FromUserName><![CDATA[${payload.toUserId}]]></FromUserName>
-<CreateTime>${new Date().getTime()}</CreateTime>
-<MsgType><![CDATA[text]]></MsgType>
-<Content><![CDATA[${payload.text}]]></Content>
-</xml>`
-    return resMessage;
-
-};
 
 const createResponseText = async (payload: WechatCreateParams): Promise<string> => {
     try {
@@ -102,7 +90,7 @@ export class WechatService {
     static async receiveMessage(payload: WechatCreateParams): Promise<string | undefined> {
         try {
             const responseText = await createResponseText(payload);
-            const resMessage = responseBuilder(payload, responseText);
+            const resMessage = wechatResponseBuilder(payload, responseText);
             return resMessage;
         } catch (error) {
             Logger.error(error);

@@ -39,8 +39,5 @@ export class WechatController extends Controller {
             };
         }
     }
-    @Get('/')
-    public async echo(@Body() requestBody:any) {
-        return requestBody
-    }
+    
 }

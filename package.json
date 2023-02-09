@@ -40,6 +40,7 @@
         "openai": "^3.1.0",
         "rhea": "^3.0.2",
         "sequelize": "^6.28.0",
+        "sha1": "^1.1.1",
         "sqlite3": "^5.1.4",
         "swagger-ui-express": "^4.5.0",
         "tsoa": "^4.1.3",
