@@ -13,6 +13,9 @@ export default class RoutesConfig {
         /**
          * Handle missing routes
          */
+        app.use('/aws-lb', (req,res,next)=>{
+            res.status(200).send('success');
+        });
         app.use(function notFoundHandler(_req, res: ExResponse) {
             res.status(404).send({
                 message: 'Not Found',
