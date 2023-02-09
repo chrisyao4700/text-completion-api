@@ -40,7 +40,7 @@ export class WechatController extends Controller {
         }
     }
     @Get('/')
-    public async echo() {
-        return "success"
+    public async echo(@Body() requestBody:any) {
+        return requestBody
     }
 }
