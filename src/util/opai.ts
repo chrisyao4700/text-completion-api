@@ -23,7 +23,6 @@ export const createTextFromPrompt = async (prompt: string): Promise<string> => {
         if (resText === '') return 'Too hard to understand, please try again';
         return resText;
     } catch (e) {
-        console.log(e)
         return 'Too hard to understand, please try again';
     }
 }
