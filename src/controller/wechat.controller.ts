@@ -21,15 +21,17 @@ export class WechatController extends Controller {
     public async create(@Body() requestBody: WechatRequestBody): Promise<string | Error> {
         try {
 
+            console.log(requestBody)
             const wechatInput: WechatCreateParams = {
                 userId: requestBody.FromUserName,
                 text: requestBody.Content,
                 toUserId: requestBody.ToUserName,
                 messageId: requestBody.MsgId
             };
-            const createResponse = await WechatService.receiveMessage(wechatInput);
-            setResponseCode(this, createResponse, 200);
-            return createResponse;
+            // const createResponse = await WechatService.receiveMessage(wechatInput);
+            // setResponseCode(this, createResponse, 200);
+            setResponseCode(this, 'ds', 200);
+            return 'zhidaola';
 
         } catch (error) {
             Logger.error(error);

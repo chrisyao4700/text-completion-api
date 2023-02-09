@@ -84,9 +84,10 @@ const createResponseText = async (payload: WechatCreateParams): Promise<string |
 
 
 export class WechatService {
-
     static async receiveMessage(payload: WechatCreateParams): Promise<string> {
         try {
+            console.log('cc',chache);
+            console.log('mi',payload.messageId);
             if (chache.has(payload.messageId)) {
                 return await delayReply(20);
             }else{
