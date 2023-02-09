@@ -92,14 +92,15 @@ export class WechatService {
                 chache.set(payload.messageId, true);
             }
 
-            const responseText = await createResponseText(payload);
-            if (responseText === null) {
-                const errText = wechatResponseBuilder(payload, 'Cannot get anwser from the chatbot, please try again later');
-                return await delayReply(20, errText);
-            }
-            const resMessage = wechatResponseBuilder(payload, responseText);
+            //First time receive message
+            createResponseText(payload)
+            .then(responseText=>{
+                const resMessage = wechatResponseBuilder(payload, responseText!);
+                resultCache.set(payload.messageId, resMessage);
+            });
+           
+            await delayReply(20,'');
             
-            resultCache.set(payload.messageId, resMessage);
             chache.delete(payload.messageId);
             return resMessage;
         } catch (error) {
