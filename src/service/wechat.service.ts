@@ -74,7 +74,7 @@ const createResponseText = async (payload: WechatCreateParams): Promise<string> 
         }
 
     } catch (error) {
-        Logger.error(error);
+        console.log(error);
         return 'Error, please try again later';
     }
 }
