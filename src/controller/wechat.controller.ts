@@ -18,7 +18,7 @@ export class WechatController extends Controller {
 
     @SuccessResponse('200', 'Created Wechat Message')
     @Post('/')
-    public async create(@Body() requestBody: WechatRequestBody): Promise<string | undefined | Error> {
+    public async create(@Body() requestBody: WechatRequestBody): Promise<string | Error> {
         try {
 
             const wechatInput: WechatCreateParams = {

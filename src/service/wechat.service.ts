@@ -5,7 +5,7 @@ import User from '../model/user.model';
 import { LINE_ROLE } from '../model/line.model';
 
 import { createTextFromPrompt } from '../util/opai';
-import { timeDiffMinutes, wechatResponseBuilder } from '../util/util';
+import { delayReply, timeDiffMinutes, wechatResponseBuilder } from '../util/util';
 export type ChatCreateParams = Required<ChatInput>;
 
 export type WechatCreateParams = {
@@ -86,10 +86,10 @@ const createResponseText = async (payload: WechatCreateParams): Promise<string |
 
 export class WechatService {
 
-    static async receiveMessage(payload: WechatCreateParams): Promise<string | undefined> {
+    static async receiveMessage(payload: WechatCreateParams): Promise<string> {
         try {
             const responseText = await createResponseText(payload);
-            if(!responseText) return undefined;
+            if(!responseText) return await delayReply(20);
             const resMessage = wechatResponseBuilder(payload, responseText);
             return resMessage;
         } catch (error) {

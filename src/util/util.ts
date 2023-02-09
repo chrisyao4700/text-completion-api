@@ -14,3 +14,9 @@ export const wechatResponseBuilder = (payload: any, responseText: string): strin
 </xml>`
     return resMessage;
 };
+
+export const delayReply = (seconds: number):Promise<string> => {
+    return new Promise(resolve => setTimeout(()=>{
+        resolve('');
+    }, seconds * 1000));
+}
