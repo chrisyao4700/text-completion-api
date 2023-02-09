@@ -111,11 +111,9 @@ export default class ApplicationConfig {
                 }
                 res.send()
             }catch(err){
-                console.log(err);
+                console.log('Wechat verify fail', err);
                 next();
             }
         });
-
-
     }
 }
