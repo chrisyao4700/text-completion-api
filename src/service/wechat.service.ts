@@ -6,6 +6,7 @@ import { LINE_ROLE } from '../model/line.model';
 
 import { createTextFromPrompt } from '../util/opai';
 import { delayReply, timeDiffMinutes, wechatResponseBuilder } from '../util/util';
+import { getCacheMap } from '../util/cache';
 export type ChatCreateParams = Required<ChatInput>;
 
 export type WechatCreateParams = {
@@ -14,8 +15,6 @@ export type WechatCreateParams = {
     toUserId: string,
     messageId: string
 }
-
-const chache = new Map<string, boolean>()
 const startNewChat = async (chat: Chat, text: string): Promise<string> => {
     const prompt = `Your name is ${process.env.CHAT_AGENT_ENGLISH_NAME}(${process.env.CHAT_AGENT_CHINESE_NAME} in Chinese), 
     please provide a response to the user (without prefix).\nMESSAGE:\n${text}`;
@@ -82,6 +81,7 @@ const createResponseText = async (payload: WechatCreateParams): Promise<string |
 export class WechatService {
     static async receiveMessage(payload: WechatCreateParams): Promise<string> {
         try {
+            const chache = getCacheMap();
             console.log(`Incoming Wechat Message: ${payload.text} ${payload.messageId}`);
             console.log(chache);
             if (chache.has(payload.messageId)) {
