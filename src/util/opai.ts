@@ -7,7 +7,7 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration);
 
 export const createTextFromPrompt = async (prompt: string): Promise<string> => {
-    console.log('Sent out:',prompt);
+    // console.log('Sent out:',prompt);
     const completion = await openai.createCompletion({
         model: `${process.env.OPEN_API_USING_MODEL || 'texdt-davinci-003'}`,
         prompt: prompt,
@@ -16,7 +16,7 @@ export const createTextFromPrompt = async (prompt: string): Promise<string> => {
     });
     // console.log(completion.data.choices);
     const resText = `${completion.data.choices[0].text}`;
-    console.log('Came in:', resText);
+    // console.log('Came in:', resText);
     if(resText === '') throw new Error('Cannot get response');
     return resText;
 }
