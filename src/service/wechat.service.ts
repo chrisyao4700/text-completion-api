@@ -85,7 +85,7 @@ export class WechatService {
             const resultCache = getCacheResultMap();
             if (chache.has(payload.messageId)) {
                 if (chache.get(payload.messageId) === 1) {
-                    await delayReply(5, '');
+                    await delayReply(4, '');
                     if (resultCache.has(payload.messageId)) {
                         const toReturn = resultCache.get(payload.messageId);
                         resultCache.delete(payload.messageId);
@@ -98,7 +98,7 @@ export class WechatService {
                     }
                 }
                 if(chache.get(payload.messageId) === 2) {
-                    await delayReply(5, '');
+                    await delayReply(4, '');
                     if (resultCache.has(payload.messageId)) {
                         const toReturn = resultCache.get(payload.messageId);
                         resultCache.delete(payload.messageId);
