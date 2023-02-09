@@ -18,7 +18,7 @@ export type WechatCreateParams = {
 const chache = new Map<string, boolean>()
 const startNewChat = async (chat: Chat, text: string): Promise<string> => {
     //New message from user
-    const prompt = `Now you are a chat responder, your name is ${process.env.CHAT_AGENT_ENGLISH_NAME}(${process.env.CHAT_AGENT_CHINESE_NAME} in Chinese), please provide a response to the user with out any prefix. \nMESSAGE:\n${text}`;
+    const prompt = `Your name is ${process.env.CHAT_AGENT_ENGLISH_NAME}(${process.env.CHAT_AGENT_CHINESE_NAME} in Chinese), please provide a response to the user (without prefix).\nMESSAGE:\n${text}`;
     const resText = await createTextFromPrompt(prompt);
     await chat.createLine({ text: text, role: LINE_ROLE.HUMAN });
     await chat.createLine({ text: resText, role: LINE_ROLE.AI });
@@ -31,7 +31,7 @@ const continueChat = async (chat: Chat, text: string): Promise<string> => {
     const historyText = previousLines.reverse().map(line => `${line.role}: ${line.text}`)
         .join('\n');
 
-    const prompt = `Now you are a chat responder, your name is ${process.env.CHAT_AGENT_ENGLISH_NAME}(${process.env.CHAT_AGENT_CHINESE_NAME} in Chinese), please provide a response(without prefix) to the user based on CHAT HISTORY:\n\n
+    const prompt = `Your name is ${process.env.CHAT_AGENT_ENGLISH_NAME}(${process.env.CHAT_AGENT_CHINESE_NAME} in Chinese), please provide a response(without prefix) to the user based on CHAT HISTORY:\n\n
     ${historyText}\n\n
     NEW MESSAGE:\n
     ${text}`;
@@ -95,7 +95,7 @@ export class WechatService {
             const responseText = await createResponseText(payload);
             if(!responseText) return await delayReply(20);
             const resMessage = wechatResponseBuilder(payload, responseText);
-            
+
             chache.delete(payload.messageId);
             return resMessage;
         } catch (error) {
