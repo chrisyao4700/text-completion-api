@@ -67,7 +67,7 @@ const createResponseText = async (payload: WechatCreateParams): Promise<string> 
                 return await startNewChat(chat!, payload.text);
             }
             const lastLine = previousLines[0];
-            if (timeDiffMinutes(lastLine.createdAt, new Date()) > 5) {
+            if (timeDiffMinutes(lastLine.createdAt, new Date()) > 1) {
                 //Too long since last message, start a new chat
                 const freshChat = await Chat.create({ title: "Wechat Conversation" });
                 await user?.update({ chatId: freshChat.id });
