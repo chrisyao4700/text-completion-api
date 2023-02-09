@@ -28,6 +28,7 @@
     },
     "dependencies": {
         "@animal-high-tech/animal-service-auth": "^1.2.8",
+        "@types/xml2js": "^0.4.11",
         "cls-hooked": "^4.2.2",
         "cors": "^2.8.5",
         "dotenv": "^16.0.3",
