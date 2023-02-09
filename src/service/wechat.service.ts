@@ -84,28 +84,42 @@ export class WechatService {
             const chache = getCacheMap();
             const resultCache = getCacheResultMap();
             if (chache.has(payload.messageId)) {
-                await delayReply(5,'');
-                if(resultCache.has(payload.messageId)){
-                    const toReturn =resultCache.get(payload.messageId);
-                    resultCache.delete(payload.messageId);
-                    return toReturn!;
-                }else{
-                    await delayReply(20,'');
-                    return wechatResponseBuilder(payload, 'Please wait for a response');
+                if (chache.get(payload.messageId) === 1) {
+                    await delayReply(5, '');
+                    if (resultCache.has(payload.messageId)) {
+                        const toReturn = resultCache.get(payload.messageId);
+                        resultCache.delete(payload.messageId);
+                        return toReturn!;
+                    } else {
+                        //Giveup second approach.
+                        chache.set(payload.messageId, 2);
+                        await delayReply(20, '');
+                        return wechatResponseBuilder(payload, 'Please wait for a response');
+                    }
+                }
+                if(chache.get(payload.messageId) === 2) {
+                    await delayReply(5, '');
+                    if (resultCache.has(payload.messageId)) {
+                        const toReturn = resultCache.get(payload.messageId);
+                        resultCache.delete(payload.messageId);
+                        return toReturn!;
+                    }else{
+                        return wechatResponseBuilder(payload, 'Question too hard...');
+                    }
                 }
             } else {
-                chache.set(payload.messageId, true);
+                chache.set(payload.messageId, 1);
             }
 
             //First time receive message
             createResponseText(payload)
-            .then(responseText=>{
-                const resMessage = wechatResponseBuilder(payload, responseText!);
-                resultCache.set(payload.messageId, resMessage);
-            });
-           
+                .then(responseText => {
+                    const resMessage = wechatResponseBuilder(payload, responseText!);
+                    resultCache.set(payload.messageId, resMessage);
+                });
+
             //Giveup first approach.
-            await delayReply(20,'');
+            await delayReply(20, '');
             chache.delete(payload.messageId);
             return wechatResponseBuilder(payload, 'Please wait for a response');
         } catch (error) {

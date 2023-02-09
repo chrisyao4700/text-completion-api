@@ -1,5 +1,5 @@
-let map: Map<string, boolean> | null = null;
-export const getCacheMap = (): Map<string, boolean> => {
+let map: Map<string, number> | null = null;
+export const getCacheMap = (): Map<string, number> => {
     if (map === null) {
         map = new Map();
     }
