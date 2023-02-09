@@ -10,7 +10,7 @@ export const wechatResponseBuilder = (payload: any, responseText: string): strin
 <FromUserName><![CDATA[${payload.toUserId}]]></FromUserName>
 <CreateTime>${new Date().getTime()}</CreateTime>
 <MsgType><![CDATA[text]]></MsgType>
-<Content><![CDATA[${payload.text}]]></Content>
+<Content><![CDATA[${responseText}]]></Content>
 </xml>`
     return resMessage;
 };
