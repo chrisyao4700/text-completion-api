@@ -12,8 +12,10 @@ export type WechatCreateParams = {
     userId: string,
     text: string,
     toUserId: string,
-    messageId: number
+    messageId: string
 }
+
+const chache = new Map<string, boolean>()
 const startNewChat = async (chat: Chat, text: string): Promise<string> => {
     //New message from user
     const prompt = `Now you are a chat responder, your name is ${process.env.CHAT_AGENT_ENGLISH_NAME}(${process.env.CHAT_AGENT_CHINESE_NAME} in Chinese), please provide a response to the user with out any prefix. \nMESSAGE:\n${text}`;
@@ -44,20 +46,17 @@ const createResponseText = async (payload: WechatCreateParams): Promise<string |
         // const toUserId = payload.userId;
         const count = await User.count({ where: { userId: payload.userId } });
         // console.log(count);
-
         if (!count) {
             //New message from user
             const chat = await Chat.create({ title: "Wechat Conversation" });
             // Create User
             const user = await User.create({ userId: payload.userId, chatId: chat.id });
-            await user.update({messageId: payload.messageId});
             const result = await startNewChat(chat, payload.text);
             return result;
 
         } else {
             //History message from user
             const user = await User.findOne({ where: { userId: payload.userId } });
-            if (user!.messageId === payload.messageId) { return null };
             const chat = await Chat.findByPk(user!.chatId);
             // console.log(chat);
             const previousLines = await chat!.getLines({ order: [['createdAt', 'DESC']], limit: 1 });
@@ -88,9 +87,16 @@ export class WechatService {
 
     static async receiveMessage(payload: WechatCreateParams): Promise<string> {
         try {
+            if (chache.has(payload.messageId)) {
+                return await delayReply(20);
+            }else{
+                chache.set(payload.messageId, true);
+            }
             const responseText = await createResponseText(payload);
             if(!responseText) return await delayReply(20);
             const resMessage = wechatResponseBuilder(payload, responseText);
+            
+            chache.delete(payload.messageId);
             return resMessage;
         } catch (error) {
             Logger.error(error);

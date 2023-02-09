@@ -7,14 +7,10 @@ export type UserAttributes = {
     id: number,
     userId: string,
     chatId: number,
-    messageId?:number
 }
 
 // Defines type of object passed into Sequelize's model.create
-export type UserInput = {
-    chatId: number,
-    userId: string,
-};
+export type UserInput = Pick<UserAttributes, 'userId' | 'chatId' >;
 // Defines returned object from model.create, model.update, and model.findOne
 export type UserOutput = Required<UserAttributes>;
 
@@ -23,7 +19,7 @@ export default class User extends Model<UserAttributes, UserInput> implements Us
 
     declare userId: string;
     declare chatId: number;
-    declare messageId: number;
+    
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
 
@@ -55,11 +51,6 @@ User.init({
         allowNull: false,
         unique: true,
         field: 'chat_id'
-    },
-    messageId:{
-        type: DataTypes.INTEGER,
-        allowNull: true,
-        field: 'message_id'
     }
 }, {
     tableName: 'user',
