@@ -86,14 +86,14 @@ export class WechatService {
             if (cache.has(payload.messageId)) {
                 //Already pinged.
                 if (cache.get(payload.messageId) === 1) {
-                    await delayReply(5, '');
+                    cache.set(payload.messageId, 2);
+                    await delayReply(3, '');
                     if (resultCache.has(payload.messageId)) {
                         const toReturn = resultCache.get(payload.messageId);
                         resultCache.delete(payload.messageId);
                         return toReturn!;
                     } else {
                         //Giveup second approach.
-                        cache.set(payload.messageId, 2);
                         await delayReply(20, '');
                         return wechatResponseBuilder(payload, 'Please wait for a response');
                     }
