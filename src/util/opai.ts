@@ -15,7 +15,7 @@ export const createTextFromPrompt = async (prompt: string): Promise<string> => {
         max_tokens: 2048
     });
     // console.log(completion.data.choices);
-    const resText = `${completion.data.choices[0].text}`;
+    const resText = `${completion.data.choices[0].text}`.split('\n').join(' ');
     // console.log('Came in:', resText);
     if(resText === '') throw new Error('Cannot get response');
     return resText;

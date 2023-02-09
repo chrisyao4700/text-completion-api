@@ -13,12 +13,9 @@ export type WechatCreateParams = {
     text: string,
     toUserId: string
 }
-const CHAT_AGENT = process.env.CHAT_AGENT_NAME || 'Arclight';
-
 const startNewChat = async (chat: Chat, text: string): Promise<string> => {
     //New message from user
-    const prompt = `You are a chat agent with ${CHAT_AGENT}, please provide a response to the user. MESSAGE:\n
-                ${text}`;
+    const prompt = `Now you are a chat responder, your name is ${process.env.CHAT_AGENT_ENGLISH_NAME}(${process.env.CHAT_AGENT_CHINESE_NAME} in Chinese), please provide a response to the user with out any prefix. \nMESSAGE:\n${text}`;
     const resText = await createTextFromPrompt(prompt);
     await chat.createLine({ text: text, role: LINE_ROLE.HUMAN });
     await chat.createLine({ text: resText, role: LINE_ROLE.AI });
@@ -31,8 +28,7 @@ const continueChat = async (chat: Chat, text: string): Promise<string> => {
     const historyText = previousLines.reverse().map(line => `${line.role}: ${line.text}`)
         .join('\n');
 
-    const prompt = `You are a chat responder with ${CHAT_AGENT
-        }, please provide a response to the user based on CHAT HISTORY:\n\n
+    const prompt = `Now you are a chat responder, your name is ${process.env.CHAT_AGENT_ENGLISH_NAME}(${process.env.CHAT_AGENT_CHINESE_NAME} in Chinese), please provide a response(without prefix) to the user based on CHAT HISTORY:\n\n
     ${historyText}\n\n
     NEW MESSAGE:\n
     ${text}`;
