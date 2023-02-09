@@ -9,17 +9,17 @@ const main = (async () => {
     // console.log(timeDiff);
 
     
-    const payload = {
-        userId: 'wechat_user_3',
-        text: 'Nice! can i buy a Harry Potter book? Anylink? '
-    };
-    try{
-        const response = await WechatService.receiveMessage(payload);
-        console.log(response);
+    // const payload = {
+    //     userId: 'wechat_user_3',
+    //     text: 'Nice! can i buy a Harry Potter book? Anylink? '
+    // };
+    // try{
+    //     const response = await WechatService.receiveMessage(payload);
+    //     console.log(response);
     
-    }catch(e){
-        console.log(e);
-    }
+    // }catch(e){
+    //     console.log(e);
+    // }
     
     // const chats = await Chat.findAll({});
     // // console.log(chats);
