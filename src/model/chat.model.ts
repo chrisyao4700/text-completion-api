@@ -1,4 +1,4 @@
-import { Model, DataTypes,BelongsToManyGetAssociationsMixin, BelongsToManyCreateAssociationMixin } from 'sequelize';
+import { Model, DataTypes, BelongsToManyGetAssociationsMixin, BelongsToManyCreateAssociationMixin } from 'sequelize';
 import { sequelizeConnection } from '../config/database.config';
 import Line from './line.model';
 
@@ -10,7 +10,7 @@ export type ChatAttributes = {
 
 // Defines type of object passed into Sequelize's model.create
 export type ChatInput = {
-    title?:string
+    title?: string
 };
 // Defines returned object from model.create, model.update, and model.findOne
 export type ChatOutput = Required<ChatAttributes>;
@@ -20,10 +20,10 @@ export default class Chat extends Model<ChatAttributes, ChatInput> implements Ch
     declare title: string
     public readonly createdAt!: Date;
 
-    declare getLines:BelongsToManyGetAssociationsMixin<Line>;
-    declare createLine:BelongsToManyCreateAssociationMixin<Line>;
+    declare getLines: BelongsToManyGetAssociationsMixin<Line>;
+    declare createLine: BelongsToManyCreateAssociationMixin<Line>;
 
-    static initChatTable = async ()=>{
+    static initChatTable = async () => {
         try {
             await Chat.sync({ force: true });
             console.log('Created Chat table');
@@ -40,8 +40,8 @@ Chat.init({
         primaryKey: true,
         unique: true
     },
-    title:{
-        type:DataTypes.STRING,
+    title: {
+        type: DataTypes.STRING,
         allowNull: false,
         defaultValue: "New Chat"
     }

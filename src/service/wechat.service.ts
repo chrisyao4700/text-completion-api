@@ -5,13 +5,14 @@ import User from '../model/user.model';
 import { LINE_ROLE } from '../model/line.model';
 
 import { createTextFromPrompt } from '../util/opai';
-import { timeDiffMinutes,wechatResponseBuilder } from '../util/util';
+import { timeDiffMinutes, wechatResponseBuilder } from '../util/util';
 export type ChatCreateParams = Required<ChatInput>;
 
 export type WechatCreateParams = {
     userId: string,
     text: string,
-    toUserId: string
+    toUserId: string,
+    messageId: number
 }
 const startNewChat = async (chat: Chat, text: string): Promise<string> => {
     //New message from user
@@ -38,7 +39,7 @@ const continueChat = async (chat: Chat, text: string): Promise<string> => {
     return resText;
 }
 
-const createResponseText = async (payload: WechatCreateParams): Promise<string> => {
+const createResponseText = async (payload: WechatCreateParams): Promise<string | null> => {
     try {
         // const toUserId = payload.userId;
         const count = await User.count({ where: { userId: payload.userId } });
@@ -48,13 +49,15 @@ const createResponseText = async (payload: WechatCreateParams): Promise<string> 
             //New message from user
             const chat = await Chat.create({ title: "Wechat Conversation" });
             // Create User
-            await User.create({ userId: payload.userId, chatId: chat.id });
+            const user = await User.create({ userId: payload.userId, chatId: chat.id });
+            await user.update({messageId: payload.messageId});
             const result = await startNewChat(chat, payload.text);
             return result;
 
         } else {
             //History message from user
             const user = await User.findOne({ where: { userId: payload.userId } });
+            if (user!.messageId === payload.messageId) { return null };
             const chat = await Chat.findByPk(user!.chatId);
             // console.log(chat);
             const previousLines = await chat!.getLines({ order: [['createdAt', 'DESC']], limit: 1 });
@@ -86,6 +89,7 @@ export class WechatService {
     static async receiveMessage(payload: WechatCreateParams): Promise<string | undefined> {
         try {
             const responseText = await createResponseText(payload);
+            if(!responseText) return undefined;
             const resMessage = wechatResponseBuilder(payload, responseText);
             return resMessage;
         } catch (error) {

@@ -25,6 +25,7 @@ export class WechatController extends Controller {
                 userId: requestBody.FromUserName,
                 text: requestBody.Content,
                 toUserId: requestBody.ToUserName,
+                messageId: Number(requestBody.MsgId)
             };
             const createResponse = await WechatService.receiveMessage(wechatInput);
             setResponseCode(this, createResponse, 200);
@@ -39,5 +40,5 @@ export class WechatController extends Controller {
             };
         }
     }
-    
+
 }
