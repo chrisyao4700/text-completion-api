@@ -93,8 +93,10 @@ export class WechatService {
             }else{
                 chache.set(payload.messageId, true);
             }
-            const responseText = await createResponseText(payload);
-            if(!responseText) return await delayReply(20);
+            const responseText = 'hellow world';
+
+            // const responseText = await createResponseText(payload);
+            // if(!responseText) return await delayReply(20);
             const resMessage = wechatResponseBuilder(payload, responseText);
 
             chache.delete(payload.messageId);
