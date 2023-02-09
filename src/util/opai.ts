@@ -20,9 +20,10 @@ export const createTextFromPrompt = async (prompt: string): Promise<string> => {
         // console.log(completion.data.choices);
         const resText = `${completion.data.choices[0].text}`.split('\n').join('');
         if (process.env.TEXT_LOGGING === 'true') console.log('Came in:', resText);
-        if (resText === '') return 'Too hard to understand, please try again';
+        if (resText === '') return 'OpenAI Brain did not get an answer, maybe try other way to say...';
         return resText;
-    } catch (e) {
-        return 'Too hard to understand, please try again';
+    } catch (e ) {
+        const err = e as Error;
+        return `OpenAI Brain throwing error ${err.message}`;
     }
 }

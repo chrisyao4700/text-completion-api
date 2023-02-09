@@ -17,7 +17,7 @@ export type WechatCreateParams = {
 }
 const startNewChat = async (chat: Chat, text: string): Promise<string> => {
     const prompt = `Your name is ${process.env.CHAT_AGENT_ENGLISH_NAME}(${process.env.CHAT_AGENT_CHINESE_NAME} in Chinese), 
-    please provide a response to the user (without prefix).\nMESSAGE:\n${text}`;
+    please provide a response.\\nMESSAGE:\\n${text}`;
     const resText = await createTextFromPrompt(prompt);
     await chat.createLine({ text: text, role: LINE_ROLE.HUMAN });
     await chat.createLine({ text: resText, role: LINE_ROLE.AI });
@@ -26,13 +26,13 @@ const startNewChat = async (chat: Chat, text: string): Promise<string> => {
 
 const continueChat = async (chat: Chat, text: string): Promise<string> => {
     const previousLines = await chat.getLines({ order: [['createdAt', 'DESC']], limit: 4 });
-    const historyText = previousLines.reverse().map(line => `${line.role}: ${line.text}`)
+    const historyText = previousLines.reverse().map(line => line.text)
         .join('\n');
 
     const prompt = `Your name is ${process.env.CHAT_AGENT_ENGLISH_NAME}(${process.env.CHAT_AGENT_CHINESE_NAME} in Chinese), 
-    please provide a response(without prefix) to the user based on the CHAT HISTORY:\n\n
-    ${historyText}\n\n
-    HERE IS THE NEW MESSAGE:\n
+    please provide a response based on the CHAT HISTORY:\\n\\n
+    ${historyText}\\n\\n
+    HERE IS THE NEW MESSAGE:\\n
     ${text}`;
     const resText = await createTextFromPrompt(prompt);
     await chat.createLine({ text: text, role: LINE_ROLE.HUMAN });
@@ -81,34 +81,35 @@ const createResponseText = async (payload: WechatCreateParams): Promise<string |
 export class WechatService {
     static async receiveMessage(payload: WechatCreateParams): Promise<string> {
         try {
-            const chache = getCacheMap();
+            const cache = getCacheMap();
             const resultCache = getCacheResultMap();
-            if (chache.has(payload.messageId)) {
-                if (chache.get(payload.messageId) === 1) {
-                    await delayReply(4, '');
+            if (cache.has(payload.messageId)) {
+                //Already pinged.
+                if (cache.get(payload.messageId) === 1) {
+                    await delayReply(5, '');
                     if (resultCache.has(payload.messageId)) {
                         const toReturn = resultCache.get(payload.messageId);
                         resultCache.delete(payload.messageId);
                         return toReturn!;
                     } else {
                         //Giveup second approach.
-                        chache.set(payload.messageId, 2);
+                        cache.set(payload.messageId, 2);
                         await delayReply(20, '');
                         return wechatResponseBuilder(payload, 'Please wait for a response');
                     }
                 }
-                if(chache.get(payload.messageId) === 2) {
-                    await delayReply(4, '');
+                if(cache.get(payload.messageId) === 2) {
+                    await delayReply(5, '');
                     if (resultCache.has(payload.messageId)) {
                         const toReturn = resultCache.get(payload.messageId);
                         resultCache.delete(payload.messageId);
                         return toReturn!;
                     }else{
-                        return wechatResponseBuilder(payload, 'Question too hard...');
+                        return wechatResponseBuilder(payload, 'Major Brain still thinking... However, WeChat won\'t wait...');
                     }
                 }
             } else {
-                chache.set(payload.messageId, 1);
+                cache.set(payload.messageId, 1);
             }
 
             //First time receive message
@@ -120,7 +121,7 @@ export class WechatService {
 
             //Giveup first approach.
             await delayReply(20, '');
-            chache.delete(payload.messageId);
+            cache.delete(payload.messageId);
             return wechatResponseBuilder(payload, 'Please wait for a response');
         } catch (error) {
             const errText = wechatResponseBuilder(payload, 'Error, please try again later');
