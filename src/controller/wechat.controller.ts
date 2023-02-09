@@ -22,6 +22,7 @@ export class WechatController extends Controller {
         try {
 
           
+            console.warn(`Incoming Wechat Message: ${requestBody.Content} ${requestBody.MsgId}`);
             const wechatInput: WechatCreateParams = {
                 userId: requestBody.FromUserName,
                 text: requestBody.Content,
