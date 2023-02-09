@@ -88,6 +88,7 @@ export class WechatService {
         try {
             console.log('cc',chache);
             console.log('mi',payload.messageId);
+            await delayReply(4);
             if (chache.has(payload.messageId)) {
                 return await delayReply(20);
             }else{
