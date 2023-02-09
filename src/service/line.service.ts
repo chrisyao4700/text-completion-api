@@ -3,12 +3,7 @@ import Line, { LineOutput, LINE_ROLE } from '../model/line.model';
 import Chat from '../model/chat.model';
 import { Logger } from '../util/logger';
 
-import { Configuration, OpenAIApi } from 'openai';
-const configuration = new Configuration({
-    apiKey: process.env.OPENAI_API_KEY
-});
-
-const openai = new OpenAIApi(configuration);
+import{createTextFromPrompt} from '../util/opai';
 // export type LineCreateParams = Required<LineInput>;
 export type LineGenerateParams = {
     chatId: number,
@@ -24,20 +19,7 @@ export type ChatLinesResponse = {
     lines: string[];
 }
 
-const createTextFromPrompt = async (prompt: string): Promise<string> => {
-    // console.log('Sent out:',prompt);
-    const completion = await openai.createCompletion({
-        model: `${process.env.OPEN_API_USING_MODEL || 'texdt-davinci-003'}`,
-        prompt: prompt,
-        temperature: 1,
-        max_tokens: 2048
-    });
-    // console.log(completion.data.choices);
-    const resText = `${completion.data.choices[0].text}`.split('\n').join('');
-    // console.log('Came in:', resText);
-    if(resText === '') throw new Error('Cannot get response');
-    return resText;
-}
+
 
 export class LineService {
 
@@ -48,11 +30,11 @@ export class LineService {
             if (chat) {
 
                 /** Append previous conversation */
-                const previousLines = await chat.getLines();
-                const historyText = previousLines.map(line => `${line.role}: ${line.text}`)
+                const previousLines = await chat.getLines({order: [['createdAt', 'DESC']], limit: 4});
+                const historyText = previousLines.reverse().map(line => `${line.role}: ${line.text}`)
                     .join('\n');
 
-                const prompt = `${previousLines.length > 0 ? "Please provide response base on the chat history and the ew message\nCHAT HISTORY:\n\n" : ''}${historyText}${previousLines.length > 0 ? "\n\nNEW MESSAGE:\n" : ''}${text}`;
+                const prompt = `${previousLines.length > 0 ? "Please provide response base on the chat history and the new message\nCHAT HISTORY:\n\n" : ''}${historyText}${previousLines.length > 0 ? "\n\nNEW MESSAGE:\n" : ''}${text}`;
                 const resText = await createTextFromPrompt(prompt);
 
                 await chat.createLine({ text, role: LINE_ROLE.HUMAN });

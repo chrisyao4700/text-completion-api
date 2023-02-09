@@ -12,6 +12,6 @@ export const app = express();
 StatusConfig.init(app);
 ApplicationConfig.init(app);
 SwaggerConfig.init(app);
-AuthenticationConfig.init(app);
+// AuthenticationConfig.init(app);
 RoutesConfig.init(app);
 DatabaseConfig.config();

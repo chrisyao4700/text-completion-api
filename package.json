@@ -4,12 +4,12 @@
     "version": "1.0.2",
     "packageManager": "yarn@3.2.4",
     "scripts": {
-        "dev": "nodemon",
+        "dev": "concurrently \"nodemon\" \"nodemon -x tsoa spec-and-routes\"",
         "tsoa:gen": "tsoa routes && tsoa swagger",
         "build": "tsoa spec-and-routes && tsc",
         "init-db": "tsc &&  node build/src/perform/initDatabase.perf.js",
         "start": "node build/src/server.js",
-        "test": "node build/src/tests/index.js"
+        "test": "tsc && node build/src/tests/index.js"
     },
     "repository": "https://github.com/chrisyao4700/text-completion-api.git",
     "author": "chrisyao4700 <chrisyao900908@gmail.com>",
