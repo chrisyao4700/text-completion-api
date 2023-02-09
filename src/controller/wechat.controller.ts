@@ -36,7 +36,6 @@ export class WechatController extends Controller {
     }
     @Get('/')
     public async echo() {
-
         return "success"
     }
 }

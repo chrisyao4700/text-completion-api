@@ -13,9 +13,6 @@ export type WechatCreateParams = {
     text: string,
     toUserId: string
 }
-export type WechatOutput = {
-
-}
 const CHAT_AGENT = process.env.CHAT_AGENT_NAME || 'Arclight';
 
 const startNewChat = async (chat: Chat, text: string): Promise<string> => {
@@ -47,8 +44,8 @@ const continueChat = async (chat: Chat, text: string): Promise<string> => {
 
 const responseBuilder = (payload: WechatCreateParams, responseText: string): string => {
     const resMessage = `<xml>
-<ToUserName><![CDATA[${payload.toUserId}]]></ToUserName>
-<FromUserName><![CDATA[${payload.userId}]]></FromUserName>
+<ToUserName><![CDATA[${payload.userId}]]></ToUserName>
+<FromUserName><![CDATA[${payload.toUserId}]]></FromUserName>
 <CreateTime>${new Date().getTime()}</CreateTime>
 <MsgType><![CDATA[text]]></MsgType>
 <Content><![CDATA[${payload.text}]]></Content>
