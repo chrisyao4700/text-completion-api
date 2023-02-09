@@ -49,8 +49,7 @@ const createResponseText = async (payload: WechatCreateParams): Promise<string |
             const chat = await Chat.create({ title: "Wechat Conversation" });
             // Create User
             await User.create({ userId: payload.userId, chatId: chat.id });
-            const result = await startNewChat(chat, payload.text);
-            return result;
+            return await startNewChat(chat, payload.text)
 
         } else {
             //History message from user
@@ -67,14 +66,12 @@ const createResponseText = async (payload: WechatCreateParams): Promise<string |
             if (timeDiffMinutes(lastLine.createdAt, new Date()) > 1) {
                 const freshChat = await Chat.create({ title: "Wechat Conversation" });
                 await user?.update({ chatId: freshChat.id });
-                const result = await startNewChat(freshChat, payload.text);
-                return result;
+                return await startNewChat(freshChat, payload.text);
             }
             return await continueChat(chat!, payload.text);
         }
 
     } catch (error) {
-        console.log(error);
         const errText = wechatResponseBuilder(payload, 'Error, please try again later');
         return await delayReply(20, errText);
     }
@@ -85,8 +82,10 @@ const createResponseText = async (payload: WechatCreateParams): Promise<string |
 export class WechatService {
     static async receiveMessage(payload: WechatCreateParams): Promise<string> {
         try {
+            console.log(`Incoming Wechat Message: ${payload.text} ${payload.messageId}`);
+            console.log(chache);
             if (chache.has(payload.messageId)) {
-                return await delayReply(20,'Please wait for the previous message to be processed');
+                return await delayReply(20, 'Please wait for the previous message to be processed');
             } else {
                 chache.set(payload.messageId, true);
             }
