@@ -85,9 +85,14 @@ export class WechatService {
             const resultCache = getCacheResultMap();
             if (chache.has(payload.messageId)) {
                 await delayReply(5,'');
-                const toReturn =resultCache.get(payload.messageId)||'';
-                resultCache.delete(payload.messageId);
-                return toReturn;
+                if(resultCache.has(payload.messageId)){
+                    const toReturn =resultCache.get(payload.messageId);
+                    resultCache.delete(payload.messageId);
+                    return toReturn!;
+                }else{
+                    await delayReply(20,'');
+                    return wechatResponseBuilder(payload, 'Please wait for a response');
+                }
             } else {
                 chache.set(payload.messageId, true);
             }
@@ -99,12 +104,11 @@ export class WechatService {
                 resultCache.set(payload.messageId, resMessage);
             });
            
+            //Giveup first approach.
             await delayReply(20,'');
-            
             chache.delete(payload.messageId);
-            return resMessage;
+            return wechatResponseBuilder(payload, 'Please wait for a response');
         } catch (error) {
-            Logger.error(error);
             const errText = wechatResponseBuilder(payload, 'Error, please try again later');
             return await delayReply(20, errText);
         }
