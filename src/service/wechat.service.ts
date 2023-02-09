@@ -6,7 +6,7 @@ import { LINE_ROLE } from '../model/line.model';
 
 import { createTextFromPrompt } from '../util/opai';
 import { delayReply, timeDiffMinutes, wechatResponseBuilder } from '../util/util';
-import { getCacheMap } from '../util/cache';
+import { getCacheMap, getCacheResultMap } from '../util/cache';
 export type ChatCreateParams = Required<ChatInput>;
 
 export type WechatCreateParams = {
@@ -82,10 +82,12 @@ export class WechatService {
     static async receiveMessage(payload: WechatCreateParams): Promise<string> {
         try {
             const chache = getCacheMap();
-            console.log(`Incoming Wechat Message: ${payload.text} ${payload.messageId}`);
-            console.log(chache);
+            const resultCache = getCacheResultMap();
             if (chache.has(payload.messageId)) {
-                return await delayReply(20, 'Please wait for the previous message to be processed');
+                await delayReply(5,'');
+                const toReturn =resultCache.get(payload.messageId)||'';
+                resultCache.delete(payload.messageId);
+                return toReturn;
             } else {
                 chache.set(payload.messageId, true);
             }
@@ -96,6 +98,8 @@ export class WechatService {
                 return await delayReply(20, errText);
             }
             const resMessage = wechatResponseBuilder(payload, responseText);
+            
+            resultCache.set(payload.messageId, resMessage);
             chache.delete(payload.messageId);
             return resMessage;
         } catch (error) {

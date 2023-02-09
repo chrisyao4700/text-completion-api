@@ -5,3 +5,10 @@ export const getCacheMap = (): Map<string, boolean> => {
     }
     return map;
 }
+let resMap: Map<string, string> | null = null;
+export const getCacheResultMap = (): Map<string, string> => {
+    if (resMap === null) {
+        resMap = new Map();
+    }
+    return resMap;
+}
