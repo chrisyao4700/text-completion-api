@@ -1,12 +1,12 @@
 
 import Chat, { ChatInput, ChatOutput } from '../model/chat.model';
-import { Logger } from '../util/logger';
 import User from '../model/user.model';
 import { LINE_ROLE } from '../model/line.model';
 
 import { createTextFromPrompt } from '../util/opai';
-import { delayReply, timeDiffMinutes, wechatResponseBuilder } from '../util/util';
+import { delayReply, timeDiffMinutes } from '../util/util';
 import { getCacheMap, getCacheResultMap } from '../util/cache';
+import { sendWeChatMessage, wechatResponseBuilder } from '../util/wechat';
 export type ChatCreateParams = Required<ChatInput>;
 
 export type WechatCreateParams = {
@@ -98,14 +98,15 @@ export class WechatService {
                         return wechatResponseBuilder(payload, 'Please wait for a response');
                     }
                 }
-                if(cache.get(payload.messageId) === 2) {
+                if (cache.get(payload.messageId) === 2) {
                     await delayReply(2, '');
                     if (resultCache.has(payload.messageId)) {
                         const toReturn = resultCache.get(payload.messageId);
                         resultCache.delete(payload.messageId);
                         return toReturn!;
-                    }else{
-                        return wechatResponseBuilder(payload, 'Major Brain still thinking... However, WeChat won\'t wait...');
+                    } else {
+                        cache.set(payload.messageId, 3);
+                        return wechatResponseBuilder(payload, 'Major Brain is still thinking... However, WeChat won\'t wait...Will notifiy you when I have a better answer.');
                     }
                 }
             } else {
@@ -117,6 +118,13 @@ export class WechatService {
                 .then(responseText => {
                     const resMessage = wechatResponseBuilder(payload, responseText!);
                     resultCache.set(payload.messageId, resMessage);
+                    return responseText;
+                })
+                .then(responseText => {
+                    if (cache.get(payload.messageId) === 3) {
+                        sendWeChatMessage(payload.userId, responseText!)
+                            .then();
+                    }
                 });
 
             //Giveup first approach.

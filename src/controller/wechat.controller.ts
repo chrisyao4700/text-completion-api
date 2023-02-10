@@ -20,9 +20,6 @@ export class WechatController extends Controller {
     @Post('/')
     public async create(@Body() requestBody: WechatRequestBody): Promise<string | Error> {
         try {
-
-          
-            console.warn(`Incoming Wechat Message: ${requestBody.Content} ${requestBody.MsgId}`);
             const wechatInput: WechatCreateParams = {
                 userId: requestBody.FromUserName,
                 text: requestBody.Content,

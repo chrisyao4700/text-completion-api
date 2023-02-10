@@ -1,6 +1,6 @@
 import morgan from 'morgan';
 import bodyParser from 'body-parser';
-import {parseString} from 'xml2js';
+
 import express, { urlencoded } from 'express';
 import {
     Response as ExResponse,
@@ -9,48 +9,14 @@ import {
 } from 'express';
 import cors = require('cors');
 require('dotenv').config();
-const sha1 = require('sha1');
+import { parseWeChatBody, verifyWechatSignature } from '../util/wechat';
+
 
 import { loggerMiddleware } from '../util/logger';
 
-const getUserDataAsync =  (req: ExRequest, res: ExResponse):any => {
-    let temp = ''
-    return new Promise((resolve, reject) => {
-        req.on('data',data=>{
-            temp += data.toString();
-        })
-        .on('end',()=>{
-            resolve(temp);
-        });
-    });
-}
-const parseXML = (xml: string):any => {
-    return new Promise((resolve, reject) => {
-        parseString(xml, (err, result) => {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(result);
-            }
-        });
-    });
-}
-const formatMessage = (jsData: any): any => {
-    let message: any = {};
-    jsData = jsData.xml;
 
-    if (typeof jsData === 'object') {
-        for (let key in jsData) {
-            let value = jsData[key];
-            if (Array.isArray(value) && value.length > 0) {
-                message[key] = value[0];
-            }
-        }
-    }
-    return message;
-}
 export default class ApplicationConfig {
-    
+
     static init(app: express.Application) {
         app.use(cors());
 
@@ -70,50 +36,37 @@ export default class ApplicationConfig {
 
         app.use(bodyParser.json());
         app.use(bodyParser.urlencoded({ extended: false }));
-
-        
-
         app.use(
             morgan('combined')
         );
-        app.post('/v1/wechat',async (req: ExRequest,res: ExResponse,next:NextFunction)=>{
+        app.post('/v1/wechat', async (req: ExRequest, res: ExResponse, next: NextFunction) => {
             /*Parse XML For Wechat*/
-            try
-            {
-                const xmlData = await getUserDataAsync(req,res);
-                const jsData = await parseXML(xmlData);
-                const message = formatMessage(jsData);
-                // console.log(message);
-                req.body = message;
-                // res.send('success');
+            try {
+                const parsedBody = await parseWeChatBody(req);
+                req.body = parsedBody;
                 next();
-            }catch(err){
-                console.log(err);
+            } catch (err) {
+                console.warn(err);
+                req.body = {};
                 next();
             }
-            
+
         });
-        app.get('/v1/wechat',async (req: ExRequest,res: ExResponse,next:NextFunction)=>{
-            /*Parse XML For Wechat*/
-            try
-            {
-                var token = process.env.WECHAT_TOKEN;
-                var signature = req.query.signature;
-                var nonce = req.query.nonce;
-                var timestamp = req.query.timestamp;
-                var echostr = req.query.echostr;
-                var str = [token, timestamp, nonce].sort().join('')
-                var sha = sha1(str)
+
+        app.get('/v1/wechat', async (req: ExRequest, res: ExResponse, next: NextFunction) => {
+            try {
+                const [sha, signature, echostr] = await verifyWechatSignature(req);
                 if (sha === signature) {
                     res.send(echostr)
-                }else{
+                } else {
                     res.send('error')
                 }
                 res.send()
-            }catch(err){
+            } catch (err) {
                 console.log('Wechat verify fail', err);
                 next();
             }
         });
+
     }
 }
