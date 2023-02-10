@@ -1,5 +1,6 @@
 import { parseString } from 'xml2js';
 import { Request } from 'express';
+import { sendAxiosRequest } from './util';
 const sha1 = require('sha1');
 
 
@@ -93,9 +94,8 @@ export const getWeChatAccessToken = async (): Promise<string> => {
     if (accessTokenRecord && accessTokenRecord.expiresDate > new Date()) {
         return accessTokenRecord.access_token;
     }
-  
     const url = `https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${appId}&secret=${appSecret}`;
-    const response = await fetch(url);
+    const response = await sendAxiosRequest(url, 'GET');
     const data = await response.json();
     const { access_token, expires_in } = data;
     accessTokenRecord = {
@@ -109,16 +109,9 @@ export const getWeChatAccessToken = async (): Promise<string> => {
 export const sendWeChatMessage = async (message: string, openId: string) => {
     const accessToken = await getWeChatAccessToken();
     const url = `https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=${accessToken}`;
-    const response = await fetch(url, {
-        method: 'POST',
-        body: JSON.stringify({
-            touser: openId,
-            msgtype: 'text',
-            text: {
-                content: message
-            }
-        })
-    });
+    const payload =  {  "touser": openId, "msgtype": "text", "text": { "content": message } };
+    const bodyStr = JSON.stringify(payload);
+    const response = await sendAxiosRequest(url, 'POST', bodyStr);
     const data = await response.json();
     return data;
 }
