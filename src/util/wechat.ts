@@ -96,7 +96,7 @@ export const getWeChatAccessToken = async (): Promise<string> => {
     }
     const url = `https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${appId}&secret=${appSecret}`;
     const response = await sendAxiosRequest(url, 'GET');
-    const data = await response.json();
+    const data = JSON.parse(response);
     const { access_token, expires_in } = data;
     accessTokenRecord = {
         access_token,
@@ -112,6 +112,5 @@ export const sendWeChatMessage = async (message: string, openId: string) => {
     const payload =  {  "touser": openId, "msgtype": "text", "text": { "content": message } };
     const bodyStr = JSON.stringify(payload);
     const response = await sendAxiosRequest(url, 'POST', bodyStr);
-    const data = await response.json();
-    return data;
+    return response;
 }
