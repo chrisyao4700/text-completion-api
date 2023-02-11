@@ -1,6 +1,10 @@
 import * as speech from '@google-cloud/speech';
 
-const client = new speech.SpeechClient();
+const client = new speech.SpeechClient(
+   {
+        keyFilename: "google-credentials.json",
+   }
+);
 export const convertVoiceToText = async (audioBytes: Buffer): Promise<string> => {
     const audio = {
         content: audioBytes.toString('base64'),
