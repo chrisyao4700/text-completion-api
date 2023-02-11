@@ -10,8 +10,8 @@ export const convertVoiceToText = async (audioBytes: Buffer): Promise<string> =>
         content: audioBytes,
     };
     const config:speech.protos.google.cloud.speech.v1.IRecognitionConfig = {
-        encoding: 'AMR_WB',
-        sampleRateHertz: 16000,
+        encoding: 'AMR',
+        sampleRateHertz: 8000,
         languageCode: 'zh-CN',
     };
     const request:speech.protos.google.cloud.speech.v1.IRecognizeRequest = {
