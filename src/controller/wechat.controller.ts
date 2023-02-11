@@ -41,7 +41,7 @@ export class WechatController extends Controller {
             if(type === 'voice'){
                 const wechatInput: WechatVoiceCreateParams = {
                     userId: requestBody.FromUserName,
-                    mediaId: requestBody.Recognition!,
+                    mediaId: requestBody.MediaId!,
                     toUserId: requestBody.ToUserName,
                     messageId: requestBody.MsgId,
                     mediaFormat: requestBody.Format!
