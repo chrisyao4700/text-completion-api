@@ -104,6 +104,7 @@ export const getWeChatAccessToken = async (): Promise<string> => {
             access_token,
             expiresDate: new Date(Date.now() + (expires_in - 300) * 1000)
         }
+        console.log('I fetched access token', access_token);
         return access_token;
     } catch (e) {
 
@@ -117,8 +118,9 @@ export const getWeChatAccessToken = async (): Promise<string> => {
 
 
 export const sendWeChatMessage = async (message: string, openId: string) => {
-    console.log('Im sending out message?');
+    
     const accessToken = await getWeChatAccessToken();
+    console.log('Im sending out message?', accessToken);
     const url = `https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=${accessToken}`;
     const payload = { "touser": openId, "msgtype": "text", "text": { "content": message } };
     const bodyStr = JSON.stringify(payload);
