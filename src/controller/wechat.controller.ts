@@ -20,16 +20,30 @@ export class WechatController extends Controller {
     @Post('/')
     public async create(@Body() requestBody: WechatRequestBody): Promise<string | Error> {
         try {
-            const wechatInput: WechatCreateParams = {
-                userId: requestBody.FromUserName,
-                text: requestBody.Content,
-                toUserId: requestBody.ToUserName,
-                messageId: requestBody.MsgId
-            };
-            const createResponse = await WechatService.receiveMessage(wechatInput);
-            setResponseCode(this, createResponse, 200);
-         
-            return createResponse;
+
+            console.log()
+            const type = requestBody.MsgType;
+            if (type === 'text') {
+                const wechatInput: WechatCreateParams = {
+                    userId: requestBody.FromUserName,
+                    text: requestBody.Content,
+                    toUserId: requestBody.ToUserName,
+                    messageId: requestBody.MsgId
+                };
+                const createResponse = await WechatService.receiveMessage(wechatInput);
+                setResponseCode(this, createResponse, 200);
+
+                return createResponse;
+            }
+
+            if(type === 'voice'){
+                console.log(requestBody);
+            }
+
+
+            setResponseCode(this, '', 404);
+            return 'Not Found';
+
 
         } catch (error) {
             Logger.error(error);
