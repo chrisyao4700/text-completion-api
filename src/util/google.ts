@@ -7,7 +7,7 @@ const client = new speech.SpeechClient(
 );
 export const convertVoiceToText = async (audioBytes: Buffer): Promise<string> => {
     const audio = {
-        content: audioBytes.toString('base64'),
+        content: audioBytes,
     };
     const config:speech.protos.google.cloud.speech.v1.IRecognitionConfig = {
         encoding: 'AMR_WB',
