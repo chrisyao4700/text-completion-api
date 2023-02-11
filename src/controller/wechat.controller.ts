@@ -2,13 +2,13 @@ import { Body, Path, Controller, Post, Get, Route, Query, SuccessResponse, Secur
 import { setErrorCode, setResponseCode } from '../util/responseHandler';
 import { Logger } from '../util/logger';
 
-import { WechatCreateParams, WechatService } from '../service/wechat.service';
+import { WechatTextCreateParams, WechatService, WechatVoiceCreateParams } from '../service/wechat.service';
 
 export type WechatRequestBody = {
-    
     URL?: string, // For voice message
     MediaId?: string, // For voice message
     Recognition?: string, // For voide message
+    Format?: string, // For voice message
     ToUserName: string,
     FromUserName: string,
     CreateTime: string,
@@ -26,7 +26,7 @@ export class WechatController extends Controller {
         try {
             const type = requestBody.MsgType;
             if (type === 'text') {
-                const wechatInput: WechatCreateParams = {
+                const wechatInput: WechatTextCreateParams = {
                     userId: requestBody.FromUserName,
                     text: requestBody.Content!,
                     toUserId: requestBody.ToUserName,
@@ -39,7 +39,17 @@ export class WechatController extends Controller {
             }
 
             if(type === 'voice'){
-                console.log(requestBody);
+                const wechatInput: WechatVoiceCreateParams = {
+                    userId: requestBody.FromUserName,
+                    mediaId: requestBody.Recognition!,
+                    toUserId: requestBody.ToUserName,
+                    messageId: requestBody.MsgId,
+                    mediaFormat: requestBody.Format!
+                };
+
+                const createResponse = await WechatService.receiveVoice(wechatInput);
+                setResponseCode(this, createResponse, 200);
+                return createResponse;
             }
 
 
