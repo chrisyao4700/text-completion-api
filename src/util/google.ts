@@ -6,6 +6,7 @@ const client = new speech.SpeechClient(
    }
 );
 export const convertVoiceToText = async (fileName: string): Promise<string> => {
+    console.log('in goole',fileName);
     const audio = {
         content: fs.readFileSync(fileName).toString('base64'),
     };

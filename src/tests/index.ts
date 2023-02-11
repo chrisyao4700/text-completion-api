@@ -6,7 +6,7 @@ import { timeDiffMinutes } from "../util/util";
 import { convertVoiceToText } from "../util/google";
 const main = (async () => {
 
-    const res = await convertVoiceToText('db/temp/voice/sample.amr');
+    const res = await convertVoiceToText('db/temp/voice/23996659428375974.amr');
     console.log(res);
     // const timeDiff = timeDiffMinutes(new Date('2023-02-08T07:25:00.000Z'), new Date());
     // console.log(new Date());
