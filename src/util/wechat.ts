@@ -120,12 +120,12 @@ export const getWeChatAccessToken = async (): Promise<string> => {
 export const sendWeChatMessage = async (message: string, openId: string) => {
     
     const accessToken = await getWeChatAccessToken();
-    console.log('Im sending out message?', accessToken);
+    // console.log('Im sending out message?', accessToken);
     const url = `https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=${accessToken}`;
     const payload = { "touser": openId, "msgtype": "text", "text": { "content": message } };
     const bodyStr = JSON.stringify(payload);
     const response = await sendAxiosRequest(url, 'POST', bodyStr);
-    console.log('data',response.data);
+    // console.log('data',response.data);
     return response;
 }
 
@@ -137,10 +137,11 @@ export const fetchWeChatMedia = async (mediaId: string) => {
     return response.arrayBuffer();
 }
 
-export const downloadWeChatMedia = async (mediaId: string, filePath: string): Promise<void> => {
+export const downloadWeChatMedia = async (mediaId: string, filePath: string): Promise<string> => {
     const accessToken = await getWeChatAccessToken();
     const url = `https://api.weixin.qq.com/cgi-bin/media/get?access_token=${accessToken}&media_id=${mediaId}`;
 
+    const finalPath = `${filePath}/${mediaId}.amr`;
     return new Promise((resolve, reject) => {
         axios({
             method: 'GET',
@@ -148,9 +149,10 @@ export const downloadWeChatMedia = async (mediaId: string, filePath: string): Pr
             responseType: 'stream'
         })
             .then(function (response) {
-                response.data.pipe(fs.createWriteStream(filePath));
+
+                response.data.pipe(fs.createWriteStream(finalPath));
                 response.data.on('end', () => {
-                    resolve();
+                    resolve(finalPath);
                 });
 
                 response.data.on('error', (err: Error) => {

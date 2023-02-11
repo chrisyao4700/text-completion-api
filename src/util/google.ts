@@ -8,8 +8,12 @@ const client = new speech.SpeechClient(
 );
 export const convertVoiceToText = async (fileName: string): Promise<string> => {
     const realPath = path.resolve(fileName);
+    console.log(realPath);
+
+    const content = fs.readFileSync(realPath).toString('base64');
+    console.log(content);
     const audio = {
-        content: fs.readFileSync(realPath).toString('base64'),
+        content: content,
     };
     const config:speech.protos.google.cloud.speech.v1.IRecognitionConfig = {
         encoding: 'AMR',
