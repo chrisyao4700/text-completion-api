@@ -1,14 +1,15 @@
 import * as speech from '@google-cloud/speech';
 import fs from'fs';
+import path from 'path';
 const client = new speech.SpeechClient(
    {
         keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS,
    }
 );
 export const convertVoiceToText = async (fileName: string): Promise<string> => {
-    console.log('in goole',fileName);
+    const realPath = path.resolve(fileName);
     const audio = {
-        content: fs.readFileSync(fileName).toString('base64'),
+        content: fs.readFileSync(realPath).toString('base64'),
     };
     const config:speech.protos.google.cloud.speech.v1.IRecognitionConfig = {
         encoding: 'AMR',
