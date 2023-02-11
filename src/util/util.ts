@@ -37,7 +37,7 @@ export const saveAMRToTempFile = async (amrData: Buffer, name: string): Promise<
     });
 }
 
-export const deleteFileAtPath = async (filePath: string): Promise<void> {
+export const deleteFileAtPath = async (filePath: string): Promise<void>=> {
     return new Promise((resolve, reject) => {
         fs.unlink(filePath, (error) => {
             if (error) {
