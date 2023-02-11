@@ -97,15 +97,24 @@ export const getWeChatAccessToken = async (): Promise<string> => {
         return accessTokenRecord.access_token;
     }
     const url = `https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${appId}&secret=${appSecret}`;
-    const response = await sendAxiosRequest(url, 'GET');
 
-    const { access_token, expires_in } = response;
-    accessTokenRecord = {
-        access_token,
-        expiresDate: new Date(Date.now() + (expires_in - 300) * 1000)
+    try {
+        const response = await sendAxiosRequest(url, 'GET');
+
+        const { access_token, expires_in } = response;
+        accessTokenRecord = {
+            access_token,
+            expiresDate: new Date(Date.now() + (expires_in - 300) * 1000)
+        }
+        return access_token;
+    } catch (e) {
+
+        console.log(e);
+        return `${e}`;
     }
 
-    return access_token;
+
+    
 }
 
 
