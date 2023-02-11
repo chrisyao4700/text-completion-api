@@ -105,6 +105,7 @@ dist
 
 # database file
 db/*.db
+db/temp/voice/*amr
 
 # training data
 training/jobs/*.json
