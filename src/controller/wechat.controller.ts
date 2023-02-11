@@ -23,8 +23,6 @@ export class WechatController extends Controller {
     @Post('/')
     public async create(@Body() requestBody: WechatRequestBody): Promise<string | Error> {
         try {
-
-            console.log()
             const type = requestBody.MsgType;
             if (type === 'text') {
                 const wechatInput: WechatCreateParams = {
