@@ -3,6 +3,7 @@ import Chat, { ChatInput, ChatOutput } from '../model/chat.model';
 import User from '../model/user.model';
 import { LINE_ROLE } from '../model/line.model';
 
+import { convertVoiceToText } from '../util/google';
 import { createTextFromPrompt } from '../util/opai';
 import { delayReply, saveAMRToTempFile, timeDiffMinutes } from '../util/util';
 import { getCacheMap, getCacheResultMap } from '../util/cache';
@@ -48,7 +49,7 @@ const continueChat = async (chat: Chat, text: string): Promise<string> => {
     return resText;
 }
 
-const createResponseText = async (payload: WechatTextCreateParams): Promise<string | null> => {
+const createResponseForText = async (payload: WechatTextCreateParams): Promise<string | null> => {
     try {
         const count = await User.count({ where: { userId: payload.userId } });
         if (count === 0) {
@@ -84,7 +85,24 @@ const createResponseText = async (payload: WechatTextCreateParams): Promise<stri
     }
 }
 
+const createResponseForVoice = async (payload: WechatVoiceCreateParams): Promise<void> => {
+    const mediaInfo = await fetchWeChatMedia(payload.mediaId);
+    const text = await convertVoiceToText(mediaInfo);
 
+    const textPayload: WechatTextCreateParams = {
+        userId: payload.userId,
+        text: text,
+        toUserId: payload.toUserId,
+        messageId: payload.messageId
+    }
+    createResponseForText(textPayload)
+        .then(responseText => {
+            const resMessage = wechatResponseBuilder(textPayload, responseText!);
+            return sendWeChatMessage(responseText!, payload.userId)
+        })
+        .then();
+
+}
 
 export class WechatService {
     static async receiveMessage(payload: WechatTextCreateParams): Promise<string> {
@@ -123,7 +141,7 @@ export class WechatService {
             }
 
             //First time receive message
-            createResponseText(payload)
+            createResponseForText(payload)
                 .then(responseText => {
                     const resMessage = wechatResponseBuilder(payload, responseText!);
                     resultCache.set(payload.messageId, resMessage);
@@ -147,10 +165,7 @@ export class WechatService {
     }
 
     static async receiveVoice(payload: WechatVoiceCreateParams): Promise<string> {
-
-        const mediaInfo = await fetchWeChatMedia(payload.mediaId);
-        const path = await saveAMRToTempFile(mediaInfo, payload.messageId);
-        console.log(path);
-        return wechatResponseBuilder(payload, 'Voice is not supported yet');
+        createResponseForVoice(payload).then();
+        return 'success';
     }
 }
