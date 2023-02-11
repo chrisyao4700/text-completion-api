@@ -18,7 +18,7 @@ export const sendAxiosRequest = async (url: string, method: string, data?: any, 
             data,
             headers
         });
-        return response.data;
+        return response;
     } catch (error) {
         console.error(error);
         return error;
@@ -27,7 +27,7 @@ export const sendAxiosRequest = async (url: string, method: string, data?: any, 
 export const saveAMRToTempFile = async (amrData: Buffer, name: string): Promise<string> => {
     return new Promise((resolve, reject) => {
         const tempFilePath = `db/temp/voice/${name}.amr`;
-        fs.writeFile(tempFilePath, amrData, "base64", (err) => {
+        fs.writeFile(tempFilePath, amrData, (err) => {
             if (err) {
                 reject(err);
             } else {
