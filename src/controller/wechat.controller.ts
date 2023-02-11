@@ -5,6 +5,9 @@ import { Logger } from '../util/logger';
 import { WechatCreateParams, WechatService } from '../service/wechat.service';
 
 export type WechatRequestBody = {
+    
+    URL?: string, // For complex message
+    MediaId?: string, // For complex message
     ToUserName: string,
     FromUserName: string,
     CreateTime: string,
