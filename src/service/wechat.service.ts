@@ -81,6 +81,7 @@ const createResponseText = async (payload: WechatCreateParams): Promise<string |
 export class WechatService {
     static async receiveMessage(payload: WechatCreateParams): Promise<string> {
         try {
+            console.log(payload);
             const cache = getCacheMap();
             const resultCache = getCacheResultMap();
             if (cache.has(payload.messageId)) {
