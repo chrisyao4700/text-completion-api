@@ -1,7 +1,6 @@
 import * as speech from '@google-cloud/speech';
 
 const client = new speech.SpeechClient();
-
 export const convertVoiceToText = async (audioBytes: Buffer): Promise<string> => {
     const audio = {
         content: audioBytes.toString('base64'),
@@ -25,6 +24,7 @@ export const convertVoiceToText = async (audioBytes: Buffer): Promise<string> =>
         }
         return transcript;
       } catch (err) {
+        console.log(err);
         return 'Error transcribing audio';
       }
 }
