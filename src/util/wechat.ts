@@ -121,9 +121,8 @@ export const sendWeChatMessage = async (message: string, openId: string) => {
 
 export const fetchWeChatMedia = async (mediaId: string) => {
     const accessToken = await getWeChatAccessToken();
-    // console.log('access_token retrieved', accessToken);
     const url = `https://api.weixin.qq.com/cgi-bin/media/get?access_token=${accessToken}&media_id=${mediaId}`;
-    // console.log('fetch media url', url);
+   
     const response = await sendAxiosRequest(url, 'GET');
     return response.arrayBuffer();
 }
@@ -139,7 +138,7 @@ export const downloadWeChatMedia = async (mediaId: string, filePath: string): Pr
             responseType: 'stream'
         })
             .then(function (response) {
-                console.log(response);
+                console.log(response.data);
                 response.data.pipe(fs.createWriteStream(filePath));
                 response.data.on('end', () => {
                     resolve();
