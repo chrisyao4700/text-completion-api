@@ -4,7 +4,7 @@ import User from '../model/user.model';
 import { LINE_ROLE } from '../model/line.model';
 
 import { createTextFromPrompt } from '../util/opai';
-import { delayReply, timeDiffMinutes } from '../util/util';
+import { delayReply, saveAMRToTempFile, timeDiffMinutes } from '../util/util';
 import { getCacheMap, getCacheResultMap } from '../util/cache';
 import { fetchWeChatMedia, sendWeChatMessage, wechatResponseBuilder } from '../util/wechat';
 export type ChatCreateParams = Required<ChatInput>;
@@ -149,9 +149,8 @@ export class WechatService {
     static async receiveVoice(payload: WechatVoiceCreateParams): Promise<string> {
 
         const mediaInfo = await fetchWeChatMedia(payload.mediaId);
-
-        console.log(mediaInfo)
-
+        const path = await saveAMRToTempFile(mediaInfo, payload.messageId);
+        console.log(path);
         return wechatResponseBuilder(payload, 'Voice is not supported yet');
     }
 }
