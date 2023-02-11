@@ -80,8 +80,6 @@ export const wechatResponseBuilder = (payload: any, responseText: string): strin
         `</xml>`
     return resMessage;
 };
-
-
 // Here handle the wechat access_token
 type WeChatAcessToeknRecord = {
     access_token: string;
@@ -119,11 +117,13 @@ export const getWeChatAccessToken = async (): Promise<string> => {
 
 
 export const sendWeChatMessage = async (message: string, openId: string) => {
+    console.log('Im sending out message?');
     const accessToken = await getWeChatAccessToken();
     const url = `https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=${accessToken}`;
     const payload = { "touser": openId, "msgtype": "text", "text": { "content": message } };
     const bodyStr = JSON.stringify(payload);
     const response = await sendAxiosRequest(url, 'POST', bodyStr);
+    console.log('data',response.data);
     return response;
 }
 
