@@ -130,7 +130,6 @@ export const fetchWeChatMedia = async (mediaId: string) => {
 
 export const downloadWeChatMedia = async (mediaId: string, filePath: string): Promise<void> => {
     const accessToken = await getWeChatAccessToken();
-
     const url = `https://api.weixin.qq.com/cgi-bin/media/get?access_token=${accessToken}&media_id=${mediaId}`;
 
     const response = await axios({
