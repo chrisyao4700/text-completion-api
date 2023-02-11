@@ -18,32 +18,14 @@ export const sendAxiosRequest = async (url: string, method: string, data?: any, 
             data,
             headers
         });
-        return response;
+        return response.data;
     } catch (error) {
         console.error(error);
         return error;
     }
 }
 
-export const downloadAMRFileToFile = async (url: string, filePath: string): Promise<void> => {
-    const response = await axios({
-        url,
-        method: 'GET',
-        responseType: 'stream',
-    });
 
-    response.data.pipe(fs.createWriteStream(filePath));
-
-    return new Promise((resolve, reject) => {
-        response.data.on('end', () => {
-            resolve();
-        });
-
-        response.data.on('error', (err: Error) => {
-            reject(err);
-        });
-    });
-}
 export const saveAMRToTempFile = async (amrData: Buffer, name: string): Promise<string> => {
     return new Promise((resolve, reject) => {
         const tempFilePath = `db/temp/voice/${name}.amr`;
