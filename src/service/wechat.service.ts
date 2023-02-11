@@ -7,7 +7,7 @@ import { convertVoiceToText } from '../util/google';
 import { createTextFromPrompt } from '../util/opai';
 import { delayReply, timeDiffMinutes ,saveAMRToTempFile, deleteFileAtPath} from '../util/util';
 
-import { fetchWeChatMedia, sendWeChatMessage, wechatResponseBuilder } from '../util/wechat';
+import { downloadWeChatMedia, fetchWeChatMedia, sendWeChatMessage, wechatResponseBuilder } from '../util/wechat';
 export type ChatCreateParams = Required<ChatInput>;
 
 export type WechatTextCreateParams = {
@@ -86,9 +86,12 @@ const createResponseForText = async (payload: WechatTextCreateParams): Promise<s
 }
 
 const createResponseForVoice = async (payload: WechatVoiceCreateParams): Promise<void> => {
-    const mediaInfo = await fetchWeChatMedia(payload.mediaId);
+    // const mediaInfo = await fetchWeChatMedia(payload.mediaId);
 
-    const filePath = await saveAMRToTempFile(mediaInfo, payload.messageId);
+    // const filePath = await saveAMRToTempFile(mediaInfo, payload.messageId);
+    const filePath = `db/temp/voice/${payload.messageId}.amr`;
+    
+    await downloadWeChatMedia(payload.mediaId,filePath);
     
     console.log('here is the filepath of the voice',filePath);
     const text = await convertVoiceToText(filePath);

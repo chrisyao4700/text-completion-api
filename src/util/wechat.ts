@@ -1,6 +1,8 @@
 import { parseString } from 'xml2js';
 import { Request } from 'express';
 import { sendAxiosRequest } from './util';
+import axios from 'axios';
+import fs from 'fs';
 const sha1 = require('sha1');
 
 
@@ -102,14 +104,14 @@ export const getWeChatAccessToken = async (): Promise<string> => {
         access_token,
         expiresDate: new Date(Date.now() + (expires_in - 200) * 1000)
     }
-   
+
     return access_token;
 }
 
 
 export const sendWeChatMessage = async (message: string, openId: string) => {
     const accessToken = await getWeChatAccessToken();
-    
+
     const url = `https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=${accessToken}`;
     const payload = { "touser": openId, "msgtype": "text", "text": { "content": message } };
     const bodyStr = JSON.stringify(payload);
@@ -117,11 +119,34 @@ export const sendWeChatMessage = async (message: string, openId: string) => {
     return response;
 }
 
-export const fetchWeChatMedia = async (mediaId: string)=> {
+export const fetchWeChatMedia = async (mediaId: string) => {
     const accessToken = await getWeChatAccessToken();
     // console.log('access_token retrieved', accessToken);
     const url = `https://api.weixin.qq.com/cgi-bin/media/get?access_token=${accessToken}&media_id=${mediaId}`;
     // console.log('fetch media url', url);
     const response = await sendAxiosRequest(url, 'GET');
     return response.arrayBuffer();
+}
+
+export const downloadWeChatMedia = async (mediaId: string, filePath: string): Promise<void> => {
+    const accessToken = await getWeChatAccessToken();
+
+    const url = `https://api.weixin.qq.com/cgi-bin/media/get?access_token=${accessToken}&media_id=${mediaId}`;
+
+    const response = await axios({
+        url,
+        method: 'GET',
+        responseType: 'stream',
+    });
+
+    response.data.pipe(fs.createWriteStream(filePath));
+
+    return new Promise((resolve, reject) => {
+        response.data.on('end', () => {
+            resolve();
+        });
+        response.data.on('error', (err: Error) => {
+            reject(err);
+        });
+    });
 }

@@ -24,6 +24,26 @@ export const sendAxiosRequest = async (url: string, method: string, data?: any, 
         return error;
     }
 }
+
+export const downloadAMRFileToFile = async (url: string, filePath: string): Promise<void> => {
+    const response = await axios({
+        url,
+        method: 'GET',
+        responseType: 'stream',
+    });
+
+    response.data.pipe(fs.createWriteStream(filePath));
+
+    return new Promise((resolve, reject) => {
+        response.data.on('end', () => {
+            resolve();
+        });
+
+        response.data.on('error', (err: Error) => {
+            reject(err);
+        });
+    });
+}
 export const saveAMRToTempFile = async (amrData: Buffer, name: string): Promise<string> => {
     return new Promise((resolve, reject) => {
         const tempFilePath = `db/temp/voice/${name}.amr`;
@@ -37,7 +57,7 @@ export const saveAMRToTempFile = async (amrData: Buffer, name: string): Promise<
     });
 }
 
-export const deleteFileAtPath = async (filePath: string): Promise<void>=> {
+export const deleteFileAtPath = async (filePath: string): Promise<void> => {
     return new Promise((resolve, reject) => {
         fs.unlink(filePath, (error) => {
             if (error) {
