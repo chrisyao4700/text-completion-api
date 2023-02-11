@@ -93,9 +93,9 @@ const appId = process.env.WECHAT_APP_ID;
 const appSecret = process.env.WECHAT_APP_SECRET;
 
 export const getWeChatAccessToken = async (): Promise<string> => {
-    if (accessTokenRecord && accessTokenRecord.expiresDate > new Date()) {
-        return accessTokenRecord.access_token;
-    }
+    // if (accessTokenRecord && accessTokenRecord.expiresDate > new Date()) {
+    //     return accessTokenRecord.access_token;
+    // }
     const url = `https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${appId}&secret=${appSecret}`;
     const response = await sendAxiosRequest(url, 'GET');
 
@@ -111,7 +111,6 @@ export const getWeChatAccessToken = async (): Promise<string> => {
 
 export const sendWeChatMessage = async (message: string, openId: string) => {
     const accessToken = await getWeChatAccessToken();
-
     const url = `https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=${accessToken}`;
     const payload = { "touser": openId, "msgtype": "text", "text": { "content": message } };
     const bodyStr = JSON.stringify(payload);
@@ -122,7 +121,7 @@ export const sendWeChatMessage = async (message: string, openId: string) => {
 export const fetchWeChatMedia = async (mediaId: string) => {
     const accessToken = await getWeChatAccessToken();
     const url = `https://api.weixin.qq.com/cgi-bin/media/get?access_token=${accessToken}&media_id=${mediaId}`;
-   
+
     const response = await sendAxiosRequest(url, 'GET');
     return response.arrayBuffer();
 }
@@ -138,7 +137,6 @@ export const downloadWeChatMedia = async (mediaId: string, filePath: string): Pr
             responseType: 'stream'
         })
             .then(function (response) {
-                console.log(response.data);
                 response.data.pipe(fs.createWriteStream(filePath));
                 response.data.on('end', () => {
                     resolve();

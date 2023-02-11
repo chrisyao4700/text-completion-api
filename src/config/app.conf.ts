@@ -44,7 +44,6 @@ export default class ApplicationConfig {
             try {
                 const parsedBody = await parseWeChatBody(req);
                 req.body = parsedBody;
-                console.log(parsedBody);
                 next();
             } catch (err) {
                 console.warn(err);
