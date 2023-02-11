@@ -89,7 +89,10 @@ const createResponseForVoice = async (payload: WechatVoiceCreateParams): Promise
     const mediaInfo = await fetchWeChatMedia(payload.mediaId);
 
     const filePath = await saveAMRToTempFile(mediaInfo, payload.messageId);
+    
+    console.log('here is the filepath of the voice',filePath);
     const text = await convertVoiceToText(filePath);
+
 
     const textPayload: WechatTextCreateParams = {
         userId: payload.userId,
@@ -99,7 +102,7 @@ const createResponseForVoice = async (payload: WechatVoiceCreateParams): Promise
     }
     const responseText = await createResponseForText(textPayload);
     await sendWeChatMessage(responseText!, payload.userId);
-    await deleteFileAtPath(filePath);
+    // await deleteFileAtPath(filePath);
 }
 
 export class WechatService {
