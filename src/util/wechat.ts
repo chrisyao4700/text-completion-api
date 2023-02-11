@@ -93,9 +93,9 @@ const appId = process.env.WECHAT_APP_ID;
 const appSecret = process.env.WECHAT_APP_SECRET;
 
 export const getWeChatAccessToken = async (): Promise<string> => {
-    // if (accessTokenRecord && accessTokenRecord.expiresDate > new Date()) {
-    //     return accessTokenRecord.access_token;
-    // }
+    if (accessTokenRecord && accessTokenRecord.expiresDate > new Date()) {
+        return accessTokenRecord.access_token;
+    }
     const url = `https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${appId}&secret=${appSecret}`;
     const response = await sendAxiosRequest(url, 'GET');
 
