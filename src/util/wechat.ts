@@ -39,6 +39,7 @@ const formatMessage = (jsData: any): any => {
             }
         }
     }
+    console.log(message);
     return message;
 }
 
@@ -69,13 +70,13 @@ export const verifyWechatSignature = async (req: Request): Promise<string[]> => 
 }
 
 export const wechatResponseBuilder = (payload: any, responseText: string): string => {
-    const resMessage = `<xml>
-<ToUserName><![CDATA[${payload.userId}]]></ToUserName>
-<FromUserName><![CDATA[${payload.toUserId}]]></FromUserName>
-<CreateTime>${new Date().getTime()}</CreateTime>
-<MsgType><![CDATA[text]]></MsgType>
-<Content><![CDATA[${responseText}]]></Content>
-</xml>`
+    const resMessage = `<xml>` +
+        `<ToUserName><![CDATA[${payload.userId}]]></ToUserName>` +
+        `<FromUserName><![CDATA[${payload.toUserId}]]></FromUserName>` +
+        `<CreateTime>${new Date().getTime()}</CreateTime>` +
+        `<MsgType><![CDATA[text]]></MsgType>` +
+        `<Content><![CDATA[${responseText}]]></Content>` +
+        `</xml>`
     return resMessage;
 };
 
@@ -86,7 +87,7 @@ type WeChatAcessToeknRecord = {
     expiresDate: Date;
 }
 
-let accessTokenRecord : WeChatAcessToeknRecord | null= null;
+let accessTokenRecord: WeChatAcessToeknRecord | null = null;
 const appId = process.env.WECHAT_APP_ID;
 const appSecret = process.env.WECHAT_APP_SECRET;
 
@@ -96,7 +97,7 @@ export const getWeChatAccessToken = async (): Promise<string> => {
     }
     const url = `https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${appId}&secret=${appSecret}`;
     const response = await sendAxiosRequest(url, 'GET');
-   
+
     const { access_token, expires_in } = response;
     accessTokenRecord = {
         access_token,
@@ -109,7 +110,7 @@ export const getWeChatAccessToken = async (): Promise<string> => {
 export const sendWeChatMessage = async (message: string, openId: string) => {
     const accessToken = await getWeChatAccessToken();
     const url = `https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=${accessToken}`;
-    const payload =  {  "touser": openId, "msgtype": "text", "text": { "content": message } };
+    const payload = { "touser": openId, "msgtype": "text", "text": { "content": message } };
     const bodyStr = JSON.stringify(payload);
     const response = await sendAxiosRequest(url, 'POST', bodyStr);
     return response;
