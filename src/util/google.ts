@@ -8,10 +8,7 @@ const client = new speech.SpeechClient(
 );
 export const convertVoiceToText = async (fileName: string): Promise<string> => {
     const realPath = path.resolve(fileName);
-    console.log(realPath);
-
     const content = fs.readFileSync(realPath).toString('base64');
-    console.log('text', content);
     const audio = {
         content: content,
     };

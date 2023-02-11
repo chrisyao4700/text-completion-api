@@ -104,10 +104,8 @@ export const getWeChatAccessToken = async (): Promise<string> => {
             access_token,
             expiresDate: new Date(Date.now() + (expires_in - 300) * 1000)
         }
-        console.log('I fetched access token', access_token);
         return access_token;
     } catch (e) {
-
         console.log(e);
         return `${e}`;
     }
