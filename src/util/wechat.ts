@@ -102,12 +102,14 @@ export const getWeChatAccessToken = async (): Promise<string> => {
         access_token,
         expiresDate: new Date(Date.now() + (expires_in - 200) * 1000)
     }
+   
     return access_token;
 }
 
 
 export const sendWeChatMessage = async (message: string, openId: string) => {
     const accessToken = await getWeChatAccessToken();
+    
     const url = `https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=${accessToken}`;
     const payload = { "touser": openId, "msgtype": "text", "text": { "content": message } };
     const bodyStr = JSON.stringify(payload);
@@ -117,8 +119,9 @@ export const sendWeChatMessage = async (message: string, openId: string) => {
 
 export const fetchWeChatMedia = async (mediaId: string)=> {
     const accessToken = await getWeChatAccessToken();
+    console.log('access_token retrieved', accessToken);
     const url = `https://api.weixin.qq.com/cgi-bin/media/get?access_token=${accessToken}&media_id=${mediaId}`;
-    console.log(url);
+    console.log('fetch media url', url);
     const response = await sendAxiosRequest(url, 'GET');
     return response;
 }
