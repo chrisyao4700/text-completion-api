@@ -118,6 +118,7 @@ export const sendWeChatMessage = async (message: string, openId: string) => {
 export const fetchWeChatMedia = async (mediaId: string)=> {
     const accessToken = await getWeChatAccessToken();
     const url = `https://api.weixin.qq.com/cgi-bin/media/get?access_token=${accessToken}&media_id=${mediaId}`;
+    console.log(url);
     const response = await sendAxiosRequest(url, 'GET');
     return response;
 }
