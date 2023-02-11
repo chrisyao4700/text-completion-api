@@ -39,7 +39,6 @@ const formatMessage = (jsData: any): any => {
             }
         }
     }
-    console.log(message);
     return message;
 }
 
@@ -113,5 +112,12 @@ export const sendWeChatMessage = async (message: string, openId: string) => {
     const payload = { "touser": openId, "msgtype": "text", "text": { "content": message } };
     const bodyStr = JSON.stringify(payload);
     const response = await sendAxiosRequest(url, 'POST', bodyStr);
+    return response;
+}
+
+export const fetchWeChatMedia = async (mediaId: string)=> {
+    const accessToken = await getWeChatAccessToken();
+    const url = `https://api.weixin.qq.com/cgi-bin/media/get?access_token=${accessToken}&media_id=${mediaId}`;
+    const response = await sendAxiosRequest(url, 'GET');
     return response;
 }

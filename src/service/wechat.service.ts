@@ -6,12 +6,20 @@ import { LINE_ROLE } from '../model/line.model';
 import { createTextFromPrompt } from '../util/opai';
 import { delayReply, timeDiffMinutes } from '../util/util';
 import { getCacheMap, getCacheResultMap } from '../util/cache';
-import { sendWeChatMessage, wechatResponseBuilder } from '../util/wechat';
+import { fetchWeChatMedia, sendWeChatMessage, wechatResponseBuilder } from '../util/wechat';
 export type ChatCreateParams = Required<ChatInput>;
 
-export type WechatCreateParams = {
+export type WechatTextCreateParams = {
     userId: string,
     text: string,
+    toUserId: string,
+    messageId: string
+}
+
+export type WechatVoiceCreateParams = {
+    userId: string,
+    mediaId: string,
+    mediaFormat: string,
     toUserId: string,
     messageId: string
 }
@@ -40,7 +48,7 @@ const continueChat = async (chat: Chat, text: string): Promise<string> => {
     return resText;
 }
 
-const createResponseText = async (payload: WechatCreateParams): Promise<string | null> => {
+const createResponseText = async (payload: WechatTextCreateParams): Promise<string | null> => {
     try {
         const count = await User.count({ where: { userId: payload.userId } });
         if (count === 0) {
@@ -79,7 +87,7 @@ const createResponseText = async (payload: WechatCreateParams): Promise<string |
 
 
 export class WechatService {
-    static async receiveMessage(payload: WechatCreateParams): Promise<string> {
+    static async receiveMessage(payload: WechatTextCreateParams): Promise<string> {
         try {
             // console.log(payload);
             const cache = getCacheMap();
@@ -136,5 +144,14 @@ export class WechatService {
             const errText = wechatResponseBuilder(payload, 'Error, please try again later');
             return await delayReply(20, errText);
         }
+    }
+
+    static async receiveVoice(payload: WechatVoiceCreateParams): Promise<string> {
+
+        const mediaInfo = await fetchWeChatMedia(payload.mediaId);
+
+        console.log(mediaInfo)
+
+        return wechatResponseBuilder(payload, 'Voice is not supported yet');
     }
 }

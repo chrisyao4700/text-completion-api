@@ -6,13 +6,14 @@ import { WechatCreateParams, WechatService } from '../service/wechat.service';
 
 export type WechatRequestBody = {
     
-    URL?: string, // For complex message
-    MediaId?: string, // For complex message
+    URL?: string, // For voice message
+    MediaId?: string, // For voice message
+    Recognition?: string, // For voide message
     ToUserName: string,
     FromUserName: string,
     CreateTime: string,
     MsgType: string,
-    Content: string,
+    Content?: string,
     MsgId: string,
 }
 
@@ -27,7 +28,7 @@ export class WechatController extends Controller {
             if (type === 'text') {
                 const wechatInput: WechatCreateParams = {
                     userId: requestBody.FromUserName,
-                    text: requestBody.Content,
+                    text: requestBody.Content!,
                     toUserId: requestBody.ToUserName,
                     messageId: requestBody.MsgId
                 };
