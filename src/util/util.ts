@@ -24,14 +24,26 @@ export const sendAxiosRequest = async (url: string, method: string, data?: any, 
         return error;
     }
 }
-export const saveAMRToTempFile = async (amrData: Buffer,name:string): Promise<string> => {
+export const saveAMRToTempFile = async (amrData: Buffer, name: string): Promise<string> => {
     return new Promise((resolve, reject) => {
-        const tempFilePath = `db/temp/${name}.amr`;
+        const tempFilePath = `db/temp/voice/${name}.amr`;
         fs.writeFile(tempFilePath, amrData, (err) => {
             if (err) {
                 reject(err);
             } else {
                 resolve(tempFilePath);
+            }
+        });
+    });
+}
+
+export const deleteFileAtPath = async (filePath: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+        fs.unlink(filePath, (error) => {
+            if (error) {
+                reject(error);
+            } else {
+                resolve();
             }
         });
     });

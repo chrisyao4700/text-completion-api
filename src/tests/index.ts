@@ -1,9 +1,13 @@
 // import Chat from "../model/chat.model";
+require('dotenv').config();
 import { WechatService } from "../service/wechat.service";
 import { timeDiffMinutes } from "../util/util";
 
+import { convertVoiceToText } from "../util/google";
 const main = (async () => {
 
+    const res = await convertVoiceToText('db/temp/voice/sample.amr');
+    console.log(res);
     // const timeDiff = timeDiffMinutes(new Date('2023-02-08T07:25:00.000Z'), new Date());
     // console.log(new Date());
     // console.log(timeDiff);

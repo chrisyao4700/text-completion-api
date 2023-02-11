@@ -5,7 +5,7 @@ import { LINE_ROLE } from '../model/line.model';
 
 import { convertVoiceToText } from '../util/google';
 import { createTextFromPrompt } from '../util/opai';
-import { delayReply, timeDiffMinutes } from '../util/util';
+import { delayReply, timeDiffMinutes ,saveAMRToTempFile, deleteFileAtPath} from '../util/util';
 
 import { fetchWeChatMedia, sendWeChatMessage, wechatResponseBuilder } from '../util/wechat';
 export type ChatCreateParams = Required<ChatInput>;
@@ -87,7 +87,9 @@ const createResponseForText = async (payload: WechatTextCreateParams): Promise<s
 
 const createResponseForVoice = async (payload: WechatVoiceCreateParams): Promise<void> => {
     const mediaInfo = await fetchWeChatMedia(payload.mediaId);
-    const text = await convertVoiceToText(mediaInfo);
+
+    const filePath = await saveAMRToTempFile(mediaInfo, payload.messageId);
+    const text = await convertVoiceToText(filePath);
 
     const textPayload: WechatTextCreateParams = {
         userId: payload.userId,
@@ -96,8 +98,8 @@ const createResponseForVoice = async (payload: WechatVoiceCreateParams): Promise
         messageId: payload.messageId
     }
     const responseText = await createResponseForText(textPayload);
-    await sendWeChatMessage(responseText!, payload.userId)
-        
+    await sendWeChatMessage(responseText!, payload.userId);
+    await deleteFileAtPath(filePath);
 }
 
 export class WechatService {

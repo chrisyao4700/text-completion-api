@@ -114,5 +114,5 @@ build/
 .npmrc
 
 #Google
-google*.json
+# google*.json
 

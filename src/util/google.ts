@@ -1,13 +1,13 @@
 import * as speech from '@google-cloud/speech';
-
+import fs from'fs';
 const client = new speech.SpeechClient(
    {
-        keyFilename: "google-credentials.json",
+        keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS,
    }
 );
-export const convertVoiceToText = async (audioBytes: Buffer): Promise<string> => {
+export const convertVoiceToText = async (fileName: string): Promise<string> => {
     const audio = {
-        content: audioBytes,
+        content: fs.readFileSync(fileName).toString('base64'),
     };
     const config:speech.protos.google.cloud.speech.v1.IRecognitionConfig = {
         encoding: 'AMR',
