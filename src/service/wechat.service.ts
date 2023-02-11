@@ -91,9 +91,8 @@ const createResponseForVoice = async (payload: WechatVoiceCreateParams): Promise
     // const filePath = await saveAMRToTempFile(mediaInfo, payload.messageId);
     const foderPath = `db/temp/voice`;
     const filePath = await downloadWeChatMedia(payload.mediaId,foderPath);
-    
+    await delayReply(1,'');
     const text = await convertVoiceToText(filePath);
-
 
     const textPayload: WechatTextCreateParams = {
         userId: payload.userId,

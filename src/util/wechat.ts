@@ -113,12 +113,12 @@ export const getWeChatAccessToken = async (): Promise<string> => {
     }
 
 
-    
+
 }
 
 
 export const sendWeChatMessage = async (message: string, openId: string) => {
-    
+
     const accessToken = await getWeChatAccessToken();
     // console.log('Im sending out message?', accessToken);
     const url = `https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=${accessToken}`;
@@ -142,22 +142,20 @@ export const downloadWeChatMedia = async (mediaId: string, filePath: string): Pr
     const url = `https://api.weixin.qq.com/cgi-bin/media/get?access_token=${accessToken}&media_id=${mediaId}`;
 
     const finalPath = `${filePath}/${mediaId}.amr`;
+
+    const response = await axios({
+        method: 'GET',
+        url: url,
+        responseType: 'stream'
+    });
+
     return new Promise((resolve, reject) => {
-        axios({
-            method: 'GET',
-            url: url,
-            responseType: 'stream'
-        })
-            .then(function (response) {
-
-                response.data.pipe(fs.createWriteStream(finalPath));
-                response.data.on('end', () => {
-                    resolve(finalPath);
-                });
-
-                response.data.on('error', (err: Error) => {
-                    reject(err);
-                });
-            });
+        response.data.pipe(fs.createWriteStream(finalPath));
+        response.data.on('end', () => {
+            resolve(finalPath);
+        });
+        response.data.on('error', (err: Error) => {
+            reject(err);
+        });
     });
 }

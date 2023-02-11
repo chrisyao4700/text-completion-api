@@ -11,7 +11,7 @@ export const convertVoiceToText = async (fileName: string): Promise<string> => {
     console.log(realPath);
 
     const content = fs.readFileSync(realPath).toString('base64');
-    console.log(content);
+    console.log('text', content);
     const audio = {
         content: content,
     };
