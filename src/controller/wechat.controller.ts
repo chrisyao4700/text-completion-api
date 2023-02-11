@@ -46,6 +46,7 @@ export class WechatController extends Controller {
                     messageId: requestBody.MsgId,
                     mediaFormat: requestBody.Format!
                 };
+                console.log(requestBody);
 
                 const createResponse = await WechatService.receiveVoice(wechatInput);
                 setResponseCode(this, createResponse, 200);

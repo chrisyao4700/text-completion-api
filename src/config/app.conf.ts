@@ -44,13 +44,13 @@ export default class ApplicationConfig {
             try {
                 const parsedBody = await parseWeChatBody(req);
                 req.body = parsedBody;
+                console.log(parsedBody);
                 next();
             } catch (err) {
                 console.warn(err);
                 req.body = {};
                 next();
             }
-
         });
 
         app.get('/v1/wechat', async (req: ExRequest, res: ExResponse, next: NextFunction) => {
