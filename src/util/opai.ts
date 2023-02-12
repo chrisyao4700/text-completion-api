@@ -20,7 +20,7 @@ export const createTextFromPrompt = async (prompt: string): Promise<string> => {
         // console.log(completion.data.choices);
         const resText = `${completion.data.choices[0].text}`.split('\n').join('');
         if (process.env.TEXT_LOGGING === 'true') console.log('Came in:', resText);
-        if (resText === '') return '你说的啥呀？无语了。。。';
+        if (resText === '') return '你说的都是些啥呀？无力吐槽，我无语了。。。';
         return resText;
     } catch (e ) {
         const err = e as Error;
