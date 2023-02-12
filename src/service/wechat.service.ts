@@ -48,9 +48,9 @@ const continueChat = async (chat: Chat, text: string): Promise<string> => {
     '*聊天记录开始*'+
     `\n${historyText}\n`+
     '*聊天记录结束*'+
-    '*新信息开始*'+
+    '*信息开始*'+
     `\n${text}\n`+
-    '*新信息结束*';
+    '*信息结束*';
     const resText = await createTextFromPrompt(prompt);
     await chat.createLine({ text: text, role: LINE_ROLE.HUMAN });
     await chat.createLine({ text: resText, role: LINE_ROLE.AI });
