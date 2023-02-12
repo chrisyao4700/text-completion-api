@@ -37,7 +37,7 @@ export const convertTextToSpeech = async (text: string, filePath: string, identi
                     if (err) {
                         reject(err);
                     } else {
-                        resolve(filePath);
+                        resolve(finalPath);
                     }
                 });
             }
