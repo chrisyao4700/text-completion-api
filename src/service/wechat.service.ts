@@ -112,7 +112,7 @@ const createResponseForVoice = async (payload: WechatVoiceCreateParams): Promise
 
 
     const responseFilePath = await convertTextToSpeech(responseText!, foderPath, payload.messageId);
-    // await delayReply(1, '');
+    await delayReply(1, '');
     const responseMediaId = await uploadWeChatVoice(responseFilePath,'audio/mpeg');
     await sendWechatVoiceMessage(responseMediaId, payload.userId);
     // await sendWeChatMessage(responseText!, payload.userId);
