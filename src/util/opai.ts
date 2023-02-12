@@ -14,7 +14,7 @@ export const createTextFromPrompt = async (prompt: string): Promise<string> => {
             model: `${process.env.OPEN_API_USING_MODEL || 'texdt-davinci-003'}`,
             prompt: prompt,
             temperature: 0.7,
-            max_tokens: 4000
+            max_tokens: 2048
         });
 
         // console.log(completion.data.choices);
