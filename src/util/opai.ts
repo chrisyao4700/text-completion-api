@@ -24,7 +24,7 @@ export const createTextFromPrompt = async (prompt: string): Promise<string> => {
         return resText;
     } catch (e ) {
         const err = e as Error;
-        console.log(err.message);
-        return `你说的都是些啥呀？我懵逼了，不想理你了。。。`;
+        console.log(e);
+        return `你说的都是些啥呀？我懵逼了...`;
     }
 }
