@@ -24,6 +24,6 @@ export const createTextFromPrompt = async (prompt: string): Promise<string> => {
         return resText;
     } catch (e ) {
         const err = e as Error;
-        return `OpenAI Brain throwing error ${err.message}`;
+        return `你说的都是些啥呀？我懵逼了，不想理你了。。。`;
     }
 }
