@@ -5,9 +5,10 @@ import { LINE_ROLE } from '../model/line.model';
 
 import { convertVoiceToText } from '../util/google';
 import { createTextFromPrompt } from '../util/opai';
-import { delayReply, timeDiffMinutes ,saveAMRToTempFile, deleteFileAtPath} from '../util/util';
+import { delayReply, timeDiffMinutes, saveAMRToTempFile, deleteFileAtPath } from '../util/util';
 
-import { downloadWeChatMedia, fetchWeChatMedia, sendWeChatMessage, wechatResponseBuilder } from '../util/wechat';
+import { downloadWeChatMedia, fetchWeChatMedia, sendWeChatMessage, sendWechatVoiceMessage, uploadWeChatVoice, wechatResponseBuilder } from '../util/wechat';
+import { convertTextToSpeech } from '../util/amazon';
 export type ChatCreateParams = Required<ChatInput>;
 
 export type WechatTextCreateParams = {
@@ -25,12 +26,12 @@ export type WechatVoiceCreateParams = {
     messageId: string
 }
 const startNewChat = async (chat: Chat, text: string): Promise<string> => {
-    const prompt = `你的名字是 ${process.env.CHAT_AGENT_CHINESE_NAME}`+ 
-    `(${process.env.CHAT_AGENT_ENGLISH_NAME})`+
-    `请回复以下信息，\n`+
-    '*信息开始*'+
-    `\n${text}\n`+
-    '*信息结束*';
+    const prompt = `你的名字是 ${process.env.CHAT_AGENT_CHINESE_NAME}` +
+        `(${process.env.CHAT_AGENT_ENGLISH_NAME})` +
+        `请回复以下信息。\n` +
+        '*信息开始*' +
+        `\n${text}\n` +
+        '*信息结束*';
     const resText = await createTextFromPrompt(prompt);
     await chat.createLine({ text: text, role: LINE_ROLE.HUMAN });
     await chat.createLine({ text: resText, role: LINE_ROLE.AI });
@@ -42,15 +43,15 @@ const continueChat = async (chat: Chat, text: string): Promise<string> => {
     const historyText = previousLines.reverse().map(line => line.text)
         .join('\n');
 
-    const prompt =  `你的名字是 ${process.env.CHAT_AGENT_CHINESE_NAME}`+ 
-    `(${process.env.CHAT_AGENT_ENGLISH_NAME})`+
-    `请基于聊天记录回复新信息，\n`+
-    '*聊天记录开始*'+
-    `\n${historyText}\n`+
-    '*聊天记录结束*'+
-    '*信息开始*'+
-    `\n${text}\n`+
-    '*信息结束*';
+    const prompt = `你的名字是 ${process.env.CHAT_AGENT_CHINESE_NAME}` +
+        `(${process.env.CHAT_AGENT_ENGLISH_NAME})` +
+        `请基于聊天记录回复新信息，\n` +
+        '*聊天记录开始*' +
+        `\n${historyText}\n` +
+        '*聊天记录结束*' +
+        '*信息开始*' +
+        `\n${text}\n` +
+        '*信息结束*';
     const resText = await createTextFromPrompt(prompt);
     await chat.createLine({ text: text, role: LINE_ROLE.HUMAN });
     await chat.createLine({ text: resText, role: LINE_ROLE.AI });
@@ -98,9 +99,9 @@ const createResponseForVoice = async (payload: WechatVoiceCreateParams): Promise
 
     // const filePath = await saveAMRToTempFile(mediaInfo, payload.messageId);
     const foderPath = `db/temp/voice`;
-    const filePath = await downloadWeChatMedia(payload.mediaId,foderPath);
-    await delayReply(1,'');
-    const text = await convertVoiceToText(filePath);
+    const inputFilePath = await downloadWeChatMedia(payload.mediaId, foderPath);
+    await delayReply(1, '');
+    const text = await convertVoiceToText(inputFilePath);
     const textPayload: WechatTextCreateParams = {
         userId: payload.userId,
         text: text,
@@ -108,8 +109,15 @@ const createResponseForVoice = async (payload: WechatVoiceCreateParams): Promise
         messageId: payload.messageId
     }
     const responseText = await createResponseForText(textPayload);
-    await sendWeChatMessage(responseText!, payload.userId);
-    await deleteFileAtPath(filePath);
+
+
+    const responseFilePath = await convertTextToSpeech(responseText!, foderPath, payload.messageId);
+    // await delayReply(1, '');
+    const responseMediaId = await uploadWeChatVoice(responseFilePath,'audio/mpeg');
+    await sendWechatVoiceMessage(responseMediaId, payload.userId);
+    // await sendWeChatMessage(responseText!, payload.userId);
+    await deleteFileAtPath(inputFilePath);
+    await deleteFileAtPath(responseFilePath);
 }
 
 export class WechatService {

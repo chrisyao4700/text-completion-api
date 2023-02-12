@@ -98,7 +98,6 @@ export const getWeChatAccessToken = async (): Promise<string> => {
 
     try {
         const response = await sendAxiosRequest(url, 'GET');
-
         const { access_token, expires_in } = response;
         accessTokenRecord = {
             access_token,
@@ -109,9 +108,6 @@ export const getWeChatAccessToken = async (): Promise<string> => {
         console.log(e);
         return `${e}`;
     }
-
-
-
 }
 
 
@@ -156,4 +152,42 @@ export const downloadWeChatMedia = async (mediaId: string, filePath: string): Pr
             reject(err);
         });
     });
+}
+
+export const uploadWeChatVoice = async (filePath: string,type:string):Promise<string> => {
+    const accessToken = await getWeChatAccessToken();
+    const url = `https://api.weixin.qq.com/cgi-bin/media/upload?access_token=${accessToken}&type=voice`;
+
+    return new Promise((resolve, reject) => {
+        fs.readFile(filePath, (err, data) => {
+            if (err) {
+                reject(err);
+                return;
+            }
+            const blob = new Blob([data], { type: type });
+            const formData = new FormData();
+            formData.append('media', blob, filePath);
+            axios.post(url, formData)
+                .then(function (response) {
+                    const { media_id } = response.data;
+                    if (media_id) {
+                        resolve(media_id);
+                    } else {
+                        reject('no media id');
+                    }
+                })
+                .catch(function (error) {
+                    reject(error);
+                });
+        });
+    });
+}
+
+export const sendWechatVoiceMessage = async (mediaId: string, openId: string) => {
+    const accessToken = await getWeChatAccessToken();
+    const url = `https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=${accessToken}`;
+    const payload = { "touser": openId, "msgtype": "voice", "voice": { "media_id": mediaId } };
+    const bodyStr = JSON.stringify(payload);
+    const response = await sendAxiosRequest(url, 'POST', bodyStr);
+    return response;
 }
