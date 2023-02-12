@@ -13,14 +13,14 @@ export const createTextFromPrompt = async (prompt: string): Promise<string> => {
         const completion = await openai.createCompletion({
             model: `${process.env.OPEN_API_USING_MODEL || 'texdt-davinci-003'}`,
             prompt: prompt,
-            temperature: 1,
-            max_tokens: 2048
+            temperature: 0.7,
+            max_tokens: 4000
         });
 
         // console.log(completion.data.choices);
         const resText = `${completion.data.choices[0].text}`.split('\n').join('');
         if (process.env.TEXT_LOGGING === 'true') console.log('Came in:', resText);
-        if (resText === '') return 'OpenAI Brain did not get an answer, maybe try other way to say...';
+        if (resText === '') return '你说的啥呀？无语了。。。';
         return resText;
     } catch (e ) {
         const err = e as Error;

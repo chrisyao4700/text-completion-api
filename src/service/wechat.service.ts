@@ -25,8 +25,12 @@ export type WechatVoiceCreateParams = {
     messageId: string
 }
 const startNewChat = async (chat: Chat, text: string): Promise<string> => {
-    const prompt = `Your name is ${process.env.CHAT_AGENT_ENGLISH_NAME}(${process.env.CHAT_AGENT_CHINESE_NAME} in Chinese), 
-    please provide a response.\\nMESSAGE:\\n${text}`;
+    const prompt = `你的名字是 ${process.env.CHAT_AGENT_CHINESE_NAME}`+ 
+    `(${process.env.CHAT_AGENT_ENGLISH_NAME})`+
+    `请回复以下信息，\\n`+
+    '/*信息开始*/'+
+    `\\n${text}\\n`+
+    '/*信息结束*/';
     const resText = await createTextFromPrompt(prompt);
     await chat.createLine({ text: text, role: LINE_ROLE.HUMAN });
     await chat.createLine({ text: resText, role: LINE_ROLE.AI });
@@ -38,11 +42,15 @@ const continueChat = async (chat: Chat, text: string): Promise<string> => {
     const historyText = previousLines.reverse().map(line => line.text)
         .join('\n');
 
-    const prompt = `Your name is ${process.env.CHAT_AGENT_ENGLISH_NAME}(${process.env.CHAT_AGENT_CHINESE_NAME} in Chinese), 
-    please provide a response based on the CHAT HISTORY:\\n\\n
-    ${historyText}\\n\\n
-    HERE IS THE NEW MESSAGE:\\n
-    ${text}`;
+    const prompt =  `你的名字是 ${process.env.CHAT_AGENT_CHINESE_NAME}`+ 
+    `(${process.env.CHAT_AGENT_ENGLISH_NAME})`+
+    `请基于聊天记录回复新信息，\\n`+
+    '/*聊天记录开始*/'+
+    `\\n${historyText}\\n`+
+    '/*聊天记录结束*/'+
+    '/*新信息开始*/'+
+    `\\n${text}\\n`+
+    '/*新信息结束*/';
     const resText = await createTextFromPrompt(prompt);
     await chat.createLine({ text: text, role: LINE_ROLE.HUMAN });
     await chat.createLine({ text: resText, role: LINE_ROLE.AI });
@@ -93,7 +101,6 @@ const createResponseForVoice = async (payload: WechatVoiceCreateParams): Promise
     const filePath = await downloadWeChatMedia(payload.mediaId,foderPath);
     await delayReply(1,'');
     const text = await convertVoiceToText(filePath);
-
     const textPayload: WechatTextCreateParams = {
         userId: payload.userId,
         text: text,
