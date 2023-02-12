@@ -3,6 +3,7 @@ import { Request } from 'express';
 import { sendAxiosRequest } from './util';
 import axios from 'axios';
 import fs from 'fs';
+import { Blob } from 'buffer';
 const sha1 = require('sha1');
 
 
