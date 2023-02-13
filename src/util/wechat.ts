@@ -3,7 +3,7 @@ import { Request } from 'express';
 import { sendAxiosRequest, readFileAsBase64, readFileRaw } from './util';
 import axios from 'axios';
 import fs from 'fs';
-// import {FormData, Blob} from "formdata-node"
+const FormData = require('form-data');
 const sha1 = require('sha1');
 
 
@@ -159,10 +159,8 @@ export const downloadWeChatMedia = async (mediaId: string, filePath: string): Pr
 export const uploadWeChatVoice = async (filePath: string, type: string): Promise<string> => {
     const accessToken = await getWeChatAccessToken();
     const url = `https://api.weixin.qq.com/cgi-bin/media/upload?access_token=${accessToken}&type=voice`;
-    const dataString = await readFileRaw(filePath);
     const formData = new FormData();
-    const blob = new Blob([dataString], { type: type });
-    formData.append('media', blob, filePath);
+    formData.append('media', fs.createReadStream(filePath), {type: type});
 
     const response = await axios.post(url, formData, {
         headers: {
