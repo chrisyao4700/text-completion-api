@@ -109,19 +109,15 @@ const createResponseForVoice = async (payload: WechatVoiceCreateParams): Promise
         messageId: payload.messageId
     }
     const responseText = await createResponseForText(textPayload);
-
-
     const responseFilePath = await convertTextToSpeech(responseText!, foderPath, payload.messageId);
     await delayReply(1, '');
-    
-    // console.log('Finished create voice response');
+
     try {
-        console.log(responseFilePath);
+
         const responseMediaId = await uploadWeChatVoice(responseFilePath, 'audio/mpeg');
-        console.log('finished upload voice response');
+
         await sendWechatVoiceMessage(responseMediaId, payload.userId);
-        console.log('finished send voice response');
-            // await sendWeChatMessage(responseText!, payload.userId);
+
         await deleteFileAtPath(inputFilePath);
         await deleteFileAtPath(responseFilePath);
     } catch (e) {
