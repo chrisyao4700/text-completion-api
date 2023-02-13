@@ -3,7 +3,7 @@ import { Request } from 'express';
 import { sendAxiosRequest, readFileAsBase64, readFileRaw } from './util';
 import axios from 'axios';
 import fs from 'fs';
-import {FormData, Blob } from 'node-fetch'
+import {FormData, Blob} from "formdata-node"
 const sha1 = require('sha1');
 
 
