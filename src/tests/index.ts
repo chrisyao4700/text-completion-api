@@ -10,8 +10,8 @@ const main = (async () => {
 
 
    
-    // const res = await uploadWeChatVoice('db/temp/voice/23996659428375974.amr');
-    // console.log(res);
+    const res = await uploadWeChatVoice('db/temp/voice/23998018530481645.mp3','audio/mpeg');
+    console.log(res);
 
     // const path = 'db/temp/voice/fuck.mp3';
     // await convertTextToSpeech('我是克里斯，艺名也是克里斯～～～',path);

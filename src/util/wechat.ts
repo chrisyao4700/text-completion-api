@@ -1,10 +1,11 @@
 import { parseString } from 'xml2js';
 import { Request } from 'express';
-import { sendAxiosRequest } from './util';
+import { sendAxiosRequest, readFileAsBase64, readFileRaw } from './util';
 import axios from 'axios';
 import fs from 'fs';
-import { Blob } from 'buffer';
+import {FormData, Blob } from 'node-fetch'
 const sha1 = require('sha1');
+
 
 
 const getUserDataAsync = (req: Request): any => {
@@ -155,33 +156,22 @@ export const downloadWeChatMedia = async (mediaId: string, filePath: string): Pr
     });
 }
 
-export const uploadWeChatVoice = async (filePath: string,type:string):Promise<string> => {
+export const uploadWeChatVoice = async (filePath: string, type: string): Promise<string> => {
     const accessToken = await getWeChatAccessToken();
     const url = `https://api.weixin.qq.com/cgi-bin/media/upload?access_token=${accessToken}&type=voice`;
+    const dataString = await readFileRaw(filePath);
+    const formData = new FormData();
+    const blob = new Blob([dataString], { type: type });
+    formData.append('media', blob, filePath);
 
-    return new Promise((resolve, reject) => {
-        fs.readFile(filePath, (err, data) => {
-            if (err) {
-                reject(err);
-                return;
-            }
-            const blob = new Blob([data], { type: type });
-            const formData = new FormData();
-            formData.append('media', blob, filePath);
-            axios.post(url, formData)
-                .then(function (response) {
-                    const { media_id } = response.data;
-                    if (media_id) {
-                        resolve(media_id);
-                    } else {
-                        reject('no media id');
-                    }
-                })
-                .catch(function (error) {
-                    reject(error);
-                });
-        });
+    const response = await axios.post(url, formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
     });
+    const { media_id } = response.data;
+    return media_id;
+
 }
 
 export const sendWechatVoiceMessage = async (mediaId: string, openId: string) => {

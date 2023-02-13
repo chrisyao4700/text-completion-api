@@ -50,3 +50,24 @@ export const deleteFileAtPath = async (filePath: string): Promise<void> => {
         });
     });
 }
+
+export const readFileAsBase64 = (filePath: string): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      fs.readFile(filePath, (error, data) => {
+        if (error) {
+          reject(error);
+        }
+        resolve(data.toString('base64'));
+      });
+    });
+  };
+  export const readFileRaw = (filePath: string): Promise<Buffer> => {
+    return new Promise((resolve, reject) => {
+      fs.readFile(filePath, (error, data) => {
+        if (error) {
+          reject(error);
+        }
+        resolve(data);
+      });
+    });
+  };
