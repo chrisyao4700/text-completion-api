@@ -73,8 +73,8 @@ export const readFileRaw = (filePath: string): Promise<Buffer> => {
 };
 
 
-export const downloadImageFromURL = async (url: string, fileName: string): Promise<string> => {
-    const imagePath = `db/temp/image/${fileName}.png`;
+export const downloadImageFromURL = async (url: string, folderPath: string, identifier:string): Promise<string> => {
+    const imagePath = `${folderPath}/${identifier}.png`;
     const writer = fs.createWriteStream(imagePath);
     const response = await axios({
         url,
