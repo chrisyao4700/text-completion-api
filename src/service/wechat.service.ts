@@ -35,9 +35,9 @@ const getRandomErrText = () => {
 
 
 const startNewChat = async (chat: Chat, text: string): Promise<string> => {
-    const prompt = `你是一个微信助手，名字叫${process.env.CHAT_AGENT_CHINESE_NAME}` +
+    const prompt = `你是一个AI助手，名字叫${process.env.CHAT_AGENT_CHINESE_NAME}` +
         `(${process.env.CHAT_AGENT_ENGLISH_NAME})` +
-        `请基于收到的信息聊天。\n` +
+        `请根据收到的信息聊天。\n` +
         '*信息开始*' +
         `\n${text}\n` +
         '*信息结束*' +
@@ -53,9 +53,9 @@ const continueChat = async (chat: Chat, text: string): Promise<string> => {
     const historyText = previousLines.reverse().map(line => line.text)
         .join('\n');
 
-    const prompt = `你是一个微信助手，名字叫${process.env.CHAT_AGENT_CHINESE_NAME}` +
+    const prompt = `你是一个AI助手，名字叫${process.env.CHAT_AGENT_CHINESE_NAME}` +
         `(${process.env.CHAT_AGENT_ENGLISH_NAME})` +
-        `请基于聊天记录回复新信息，\n` +
+        `请根据聊天记录回复新信息，\n` +
         '*聊天记录开始*' +
         `\n${historyText}\n` +
         '*聊天记录结束*' +
