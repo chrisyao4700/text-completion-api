@@ -5,7 +5,7 @@ import { LINE_ROLE } from '../model/line.model';
 
 import { convertVoiceToText } from '../util/google';
 import { createTextFromPrompt, createImageFromPrompt } from '../util/opai';
-import { delayReply, timeDiffMinutes, saveAMRToTempFile, deleteFileAtPath } from '../util/util';
+import { delayReply, timeDiffMinutes, downloadImageFromURL, deleteFileAtPath } from '../util/util';
 
 import { downloadWeChatMedia, fetchWeChatMedia, sendWeChatMessage, sendWechatVoiceMessage, sendWechatImageMessage, uploadWeChatMedia, wechatResponseBuilder, extractStringInsideImageInstruction } from '../util/wechat';
 import { convertTextToSpeech } from '../util/amazon';
@@ -134,7 +134,8 @@ const createImageResponse = async (payload: WechatTextCreateParams): Promise<voi
 
 
     try {
-        const responseFilePath = await createImageFromPrompt(payload.text);
+        const imageUrl = await createImageFromPrompt(payload.text);
+        const responseFilePath = await downloadImageFromURL(imageUrl, 'db/temp/image', payload.messageId);
         const responseMediaId = await uploadWeChatMedia(responseFilePath, 'image/png');
         await sendWechatImageMessage(responseMediaId, payload.userId);
         await deleteFileAtPath(responseFilePath);
