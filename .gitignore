@@ -107,6 +107,8 @@ dist
 db/*.db
 db/temp/voice/*amr
 db/temp/voice/*mp3
+db/temp/image/*png
+db/temp/video/*mp4
 
 # training data
 training/jobs/*.json

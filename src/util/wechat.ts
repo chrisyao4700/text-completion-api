@@ -177,6 +177,31 @@ export const uploadWeChatMedia = async (filePath: string, type: string): Promise
     }
 }
 
+export const uplaodWechatConsistentVideo = async (filePath: string, title: string, description: string): Promise<string> => {
+    const accessToken = await getWeChatAccessToken();
+    const url = `https://api.weixin.qq.com/cgi-bin/material/add_material?access_token=${accessToken}&type=video`;
+    const formData = new FormData();
+    formData.append('media', fs.createReadStream(filePath));
+    formData.append('description', JSON.stringify({ title, description }));
+    // formData.append('title', title);
+    // formData.append('description', description);
+
+
+    // console.log(formData);
+    const response = await axios.post(url, formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data',
+        }
+    });
+    const { media_id } = response.data;
+    if (media_id === undefined) {
+        throw new Error(response.data.errmsg);
+    } else {
+        return media_id;
+
+    }
+}
+
 
 export const sendWechatVoiceMessage = async (mediaId: string, openId: string) => {
     const accessToken = await getWeChatAccessToken();
@@ -191,6 +216,14 @@ export const sendWechatImageMessage = async (mediaId: string, openId: string) =>
     const accessToken = await getWeChatAccessToken();
     const url = `https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=${accessToken}`;
     const payload = { "touser": openId, "msgtype": "image", "image": { "media_id": mediaId } };
+    const bodyStr = JSON.stringify(payload);
+    const response = await sendAxiosRequest(url, 'POST', bodyStr);
+    return response;
+}
+export const sendWechatVideoMessage = async (mediaId: string, openId: string) => {
+    const accessToken = await getWeChatAccessToken();
+    const url = `https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=${accessToken}`;
+    const payload = { "touser": openId, "msgtype": "video", "video": { "media_id": mediaId } };
     const bodyStr = JSON.stringify(payload);
     const response = await sendAxiosRequest(url, 'POST', bodyStr);
     return response;
