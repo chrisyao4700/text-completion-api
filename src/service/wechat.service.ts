@@ -135,9 +135,13 @@ const createImageResponse = async (payload: WechatTextCreateParams): Promise<voi
 
     try {
         const imageUrl = await createImageFromPrompt(payload.text);
+        console.log('finished image', imageUrl)
         const responseFilePath = await downloadImageFromURL(imageUrl, 'db/temp/image', payload.messageId);
+        console.log('finished download', responseFilePath);
         const responseMediaId = await uploadWeChatMedia(responseFilePath, 'image/png');
+        console.log('finished upload', responseMediaId);
         await sendWechatImageMessage(responseMediaId, payload.userId);
+        console.log('finished send')
         await deleteFileAtPath(responseFilePath);
     } catch (e) {
         console.log(e);
