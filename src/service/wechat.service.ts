@@ -162,7 +162,7 @@ const createVideoResponse = async (payload: WechatTextCreateParams): Promise<voi
     }
 }
 
-const DRAWING_INSTRUCTION_TEXT = "哦！对了！我刚刚从0-1000的随机数字理抽中了666，" +
+const DRAWING_INSTRUCTION_TEXT = "哦！对了！我刚刚从0-1000的随机数字里抽中了666，" +
     "说明你是幸运用户呢！你解锁了一项我的秘密技能哦！输入" +
     "画画<你想画的内容>，我就会帮你画画哦！";
 const createDrawingInstruction = async (payload: WechatTextCreateParams): Promise<void> => {
