@@ -161,7 +161,6 @@ export class WechatService {
     static async receiveMessage(payload: WechatTextCreateParams): Promise<string> {
         try {
             //First time receive message
-
             const pulledText = extractStringInsideImageInstruction(payload.text);
             if (pulledText !== "") {
                 payload.text = pulledText;
@@ -172,6 +171,7 @@ export class WechatService {
                 createVideoResponse(payload).then();
                 return 'success';
             }
+            
             createResponseForText(payload)
                 .then(responseText => {
                     // const resMessage = wechatResponseBuilder(payload, responseText!);

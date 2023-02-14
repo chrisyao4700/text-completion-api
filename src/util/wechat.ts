@@ -226,6 +226,7 @@ export const sendWechatVideoMessage = async (mediaId: string, openId: string) =>
     const payload = { "touser": openId, "msgtype": "video", "video": { "media_id": mediaId } };
     const bodyStr = JSON.stringify(payload);
     const response = await sendAxiosRequest(url, 'POST', bodyStr);
+    console.log(response.data);
     return response;
 }
 
