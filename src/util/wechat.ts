@@ -160,7 +160,8 @@ export const uploadWeChatMedia = async (filePath: string, type: string): Promise
     const accessToken = await getWeChatAccessToken();
     const url = `https://api.weixin.qq.com/cgi-bin/media/upload?access_token=${accessToken}&type=voice`;
     const formData = new FormData();
-    formData.append('media', fs.createReadStream(filePath), { type: type });
+    // formData.append('media', fs.createReadStream(filePath), { type: type });
+    formData.append('media', fs.createReadStream(filePath));
 
     const response = await axios.post(url, formData, {
         headers: {
@@ -174,7 +175,6 @@ export const uploadWeChatMedia = async (filePath: string, type: string): Promise
         return media_id
 
     }
-
 }
 
 
