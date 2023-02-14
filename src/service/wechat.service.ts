@@ -177,7 +177,7 @@ export class WechatService {
     static async receiveMessage(payload: WechatTextCreateParams): Promise<string> {
         try {
             //First time receive message
-            if(getRandomIntegerFromRange(0,1) === 1){
+            if(getRandomIntegerFromRange(0,1000) === 666){
                 await createDrawingInstruction(payload).then();
             }
             const pulledText = extractStringInsideImageInstruction(payload.text);
@@ -190,8 +190,6 @@ export class WechatService {
                 createVideoResponse(payload).then();
                 return 'success';
             }
-
-            
 
             createResponseForText(payload)
                 .then(responseText => {
