@@ -168,7 +168,12 @@ export const uploadWeChatMedia = async (filePath: string, type: string): Promise
         }
     });
     const { media_id } = response.data;
-    return media_id;
+    if (media_id === undefined) {
+        return media_id
+    } else {
+        throw new Error(response.data.errmsg);
+    }
+
 }
 
 
