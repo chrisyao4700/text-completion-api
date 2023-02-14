@@ -122,7 +122,7 @@ const createResponseForVoice = async (payload: WechatVoiceCreateParams): Promise
     const responseFilePath = await convertTextToSpeech(responseText!, foderPath, payload.messageId);
     await delayReply(1, '');
     try {
-        const responseMediaId = await uploadWeChatMedia(responseFilePath, 'audio/mpeg');
+        const responseMediaId = await uploadWeChatMedia(responseFilePath, 'audio');
         await sendWechatVoiceMessage(responseMediaId, payload.userId);
         await deleteFileAtPath(inputFilePath);
         await deleteFileAtPath(responseFilePath);
@@ -138,7 +138,7 @@ const createImageResponse = async (payload: WechatTextCreateParams): Promise<voi
         console.log('finished image', imageUrl)
         const responseFilePath = await downloadImageFromURL(imageUrl, 'db/temp/image', payload.messageId);
         console.log('finished download', responseFilePath);
-        const responseMediaId = await uploadWeChatMedia(responseFilePath, 'image/x-png');
+        const responseMediaId = await uploadWeChatMedia(responseFilePath, 'image');
         console.log('finished upload', responseMediaId);
         await sendWechatImageMessage(responseMediaId, payload.userId);
         console.log('finished send')

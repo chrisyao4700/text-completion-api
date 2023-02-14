@@ -158,7 +158,7 @@ export const downloadWeChatMedia = async (mediaId: string, filePath: string): Pr
 
 export const uploadWeChatMedia = async (filePath: string, type: string): Promise<string> => {
     const accessToken = await getWeChatAccessToken();
-    const url = `https://api.weixin.qq.com/cgi-bin/media/upload?access_token=${accessToken}&type=voice`;
+    const url = `https://api.weixin.qq.com/cgi-bin/media/upload?access_token=${accessToken}&type=${type}`;
     const formData = new FormData();
     // formData.append('media', fs.createReadStream(filePath), { type: type });
     formData.append('media', fs.createReadStream(filePath));
