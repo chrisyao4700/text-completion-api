@@ -5,7 +5,7 @@ import { LINE_ROLE } from '../model/line.model';
 
 import { convertVoiceToText } from '../util/google';
 import { createTextFromPrompt, createImageFromPrompt } from '../util/opai';
-import { delayReply, timeDiffMinutes, downloadImageFromURL, deleteFileAtPath } from '../util/util';
+import { delayReply, timeDiffMinutes, downloadImageFromURL, deleteFileAtPath, getRandomIntegerFromRange } from '../util/util';
 
 import { downloadWeChatMedia, sendWechatVideoMessage, sendWeChatMessage, sendWechatVoiceMessage, sendWechatImageMessage, uploadWeChatMedia, wechatResponseBuilder, extractStringInsideImageInstruction } from '../util/wechat';
 import { convertTextToSpeech } from '../util/amazon';
@@ -29,6 +29,8 @@ const errText = ['很抱歉，我现在无法回答你的问题。然而，我�
     '很抱歉，我现在无法回答你的问题，但是我还是非常高兴跟你聊天。我可以做很多东西，比如跟你聊天、回答你的日常问题。此外，我还可以帮助你一些文本工作，比如翻译、整理文件。在科学方面，算数题、LeetCode 问题这些小事我还是能搞定的。来跟我聊点别的话题吧。',
     '非常抱歉，我暂时无法回答你的问题。不过我还是很高兴能跟你聊天。我可以帮你做很多事情，如回答你的日常问题和陪你聊天。此外，我也可以帮你处理一些文本工作，比如翻译和整理文件。至于科学方面，解决数学问题和 LeetCode 问题对我来说是小菜一碟。如果你想聊其他话题也可以找我哦。',
     '非常抱歉，我目前无法回答你的问题。但我非常高兴有机会和你聊天。我可以做很多事情，例如与你交谈，回答你的日常问题。此外，我还可以帮助你处理一些文本工作，例如翻译和组织文件。在科学方面，解决数学问题和 LeetCode 问题对我而言都是小菜一碟。如果你愿意，我们可以聊些其他话题。'];
+
+
 const getRandomErrText = () => {
     return errText[Math.floor(Math.random() * errText.length)];
 }
@@ -108,25 +110,31 @@ const createResponseForText = async (payload: WechatTextCreateParams): Promise<s
 const createResponseForVoice = async (payload: WechatVoiceCreateParams): Promise<void> => {
     // const mediaInfo = await fetchWeChatMedia(payload.mediaId);
     // const filePath = await saveAMRToTempFile(mediaInfo, payload.messageId);
-    const foderPath = `db/temp/voice`;
-    const inputFilePath = await downloadWeChatMedia(payload.mediaId, foderPath);
-    await delayReply(1, '');
-    const text = await convertVoiceToText(inputFilePath);
-    const textPayload: WechatTextCreateParams = {
-        userId: payload.userId,
-        text: text,
-        toUserId: payload.toUserId,
-        messageId: payload.messageId
-    }
-    const responseText = await createResponseForText(textPayload);
-    const responseFilePath = await convertTextToSpeech(responseText!, foderPath, payload.messageId);
-    await delayReply(1, '');
+    let hasSentRes = false;
     try {
+        const foderPath = `db/temp/voice`;
+        const inputFilePath = await downloadWeChatMedia(payload.mediaId, foderPath);
+        await delayReply(1, '');
+        const text = await convertVoiceToText(inputFilePath);
+        const textPayload: WechatTextCreateParams = {
+            userId: payload.userId,
+            text: text,
+            toUserId: payload.toUserId,
+            messageId: payload.messageId
+        }
+        const responseText = await createResponseForText(textPayload);
+        const responseFilePath = await convertTextToSpeech(responseText!, foderPath, payload.messageId);
+        await delayReply(1, '');
+
         const responseMediaId = await uploadWeChatMedia(responseFilePath, 'audio');
         await sendWechatVoiceMessage(responseMediaId, payload.userId);
+        hasSentRes = true;
         await deleteFileAtPath(inputFilePath);
         await deleteFileAtPath(responseFilePath);
     } catch (e) {
+        if (!hasSentRes) {
+            await sendWeChatMessage(getRandomErrText(), payload.userId);
+        }
         console.log(e);
     }
 }
@@ -145,15 +153,23 @@ const createImageResponse = async (payload: WechatTextCreateParams): Promise<voi
 
 
 const createVideoResponse = async (payload: WechatTextCreateParams): Promise<void> => {
-    try{
-        const SELF_INTERDUCTION_MEDIA_ID ="Op-N2vbdDgVOPp-cojDvKBlNmzw3DS3I1TuaKAdeR4CZnPEhyOtzbw9ohcaoR42l";
-        
-        
-        // const responseMediaId = await uploadWeChatMedia(responseFilePath, 'video');
+    try {
+        const SELF_INTERDUCTION_MEDIA_ID = "Op-N2vbdDgVOPp-cojDvKBlNmzw3DS3I1TuaKAdeR4CZnPEhyOtzbw9ohcaoR42l";
+        //TODO: Add dynamic video
         await sendWechatVideoMessage(SELF_INTERDUCTION_MEDIA_ID, payload.userId);
-        // await deleteFileAtPath(responseFilePath);
-    }catch(e){
+    } catch (e) {
         console.log(e)
+    }
+}
+
+const DRAWING_INSTRUCTION_TEXT = "哦！对了！我刚刚从0-1000的随机数字理抽中了666，" +
+    "说明你是幸运用户呢！你解锁了一项我的秘密技能哦！输入" +
+    "画画<你想画的内容>，我就会帮你画画哦！";
+const createDrawingInstruction = async (payload: WechatTextCreateParams): Promise<void> => {
+    try {
+        await sendWeChatMessage(DRAWING_INSTRUCTION_TEXT, payload.userId);
+    } catch (e) {
+        console.log(e);
     }
 }
 
@@ -161,17 +177,22 @@ export class WechatService {
     static async receiveMessage(payload: WechatTextCreateParams): Promise<string> {
         try {
             //First time receive message
+            if(getRandomIntegerFromRange(0,1) === 1){
+                await createDrawingInstruction(payload).then();
+            }
             const pulledText = extractStringInsideImageInstruction(payload.text);
             if (pulledText !== "") {
                 payload.text = pulledText;
                 createImageResponse(payload).then();
                 return 'success';
             }
-            if(payload.text === "视频自我介绍"){
+            if (payload.text === "视频自我介绍") {
                 createVideoResponse(payload).then();
                 return 'success';
             }
+
             
+
             createResponseForText(payload)
                 .then(responseText => {
                     // const resMessage = wechatResponseBuilder(payload, responseText!);

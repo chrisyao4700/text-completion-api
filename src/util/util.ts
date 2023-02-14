@@ -89,3 +89,7 @@ export const downloadImageFromURL = async (url: string, folderPath: string, iden
         writer.on("error", reject);
     });
 }
+
+export const getRandomIntegerFromRange = (min: number, max: number): number => {
+    return Math.floor(Math.random() * (max - min + 1) + min);
+}
