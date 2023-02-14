@@ -6,8 +6,7 @@ const configuration = new Configuration({
 
 const openai = new OpenAIApi(configuration);
 
-export const createTextFromPrompt = async (prompt: string): Promise<string> => {
-    // console.log('Sent out:',prompt);
+export const createTextFromPrompt = async (prompt: string, errText:string): Promise<string> => {
     try {
         if (process.env.TEXT_LOGGING === 'true') console.log('Sent out:', prompt);
         const completion = await openai.createCompletion({
@@ -16,19 +15,16 @@ export const createTextFromPrompt = async (prompt: string): Promise<string> => {
             temperature: 0.7,
             max_tokens: 2048
         });
-
-        // console.log(completion.data.choices);
         const resText = `${completion.data.choices[0].text}`
             .split('\n').join("")
             .split('*信息开始*').join("")
             .split('*信息结束*').join("");
-
         if (process.env.TEXT_LOGGING === 'true') console.log('Came in:', resText);
-        if (resText === '') return '无力吐槽，你说的都是些啥呀？';
+        if (resText === '') return errText;
         return resText;
     } catch (e) {
         const err = e as Error;
         console.log(e);
-        return `你说的都是些啥呀？我懵逼了...`;
+        return errText;
     }
 }

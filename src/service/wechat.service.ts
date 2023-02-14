@@ -25,14 +25,24 @@ export type WechatVoiceCreateParams = {
     toUserId: string,
     messageId: string
 }
+const errText = ['很抱歉，我现在无法回答你的问题。然而，我仍然非常高兴有机会与您聊天。我可以做很多事情，例如与您交谈，回答您的日常问题。此外，我还可以帮助您处理一些文字工作，例如翻译和整理文件。在科学方面，解决数学问题，甚至 LeetCode 问题对我来说都是小菜一碟。随时与我讨论其他话题。',
+    '很抱歉，我现在无法回答你的问题，但是我还是非常高兴跟你聊天。我可以做很多东西，比如跟你聊天、回答你的日常问题。此外，我还可以帮助你一些文本工作，比如翻译、整理文件。在科学方面，算数题、LeetCode 问题这些小事我还是能搞定的。来跟我聊点别的话题吧。',
+    '非常抱歉，我暂时无法回答你的问题。不过我还是很高兴能跟你聊天。我可以帮你做很多事情，如回答你的日常问题和陪你聊天。此外，我也可以帮你处理一些文本工作，比如翻译和整理文件。至于科学方面，解决数学问题和 LeetCode 问题对我来说是小菜一碟。如果你想聊其他话题也可以找我哦。',
+    '非常抱歉，我目前无法回答你的问题。但我非常高兴有机会和你聊天。我可以做很多事情，例如与你交谈，回答你的日常问题。此外，我还可以帮助你处理一些文本工作，例如翻译和组织文件。在科学方面，解决数学问题和 LeetCode 问题对我而言都是小菜一碟。如果你愿意，我们可以聊些其他话题。'];
+const getRandomErrText = () => {
+    return errText[Math.floor(Math.random() * errText.length)];
+}
+
+
 const startNewChat = async (chat: Chat, text: string): Promise<string> => {
-    const prompt = `你的名字是 ${process.env.CHAT_AGENT_CHINESE_NAME}` +
+    const prompt = `你是一个微信助手，名字叫${process.env.CHAT_AGENT_CHINESE_NAME}` +
         `(${process.env.CHAT_AGENT_ENGLISH_NAME})` +
-        `请回复以下信息。\n` +
+        `请基于收到的信息聊天。\n` +
         '*信息开始*' +
         `\n${text}\n` +
-        '*信息结束*';
-    const resText = await createTextFromPrompt(prompt);
+        '*信息结束*' +
+        `\n请你直接回复新信息.\n`;
+    const resText = await createTextFromPrompt(prompt, getRandomErrText());
     await chat.createLine({ text: text, role: LINE_ROLE.HUMAN });
     await chat.createLine({ text: resText, role: LINE_ROLE.AI });
     return resText;
@@ -43,7 +53,7 @@ const continueChat = async (chat: Chat, text: string): Promise<string> => {
     const historyText = previousLines.reverse().map(line => line.text)
         .join('\n');
 
-    const prompt = `你的名字是 ${process.env.CHAT_AGENT_CHINESE_NAME}` +
+    const prompt = `你是一个微信助手，名字叫${process.env.CHAT_AGENT_CHINESE_NAME}` +
         `(${process.env.CHAT_AGENT_ENGLISH_NAME})` +
         `请基于聊天记录回复新信息，\n` +
         '*聊天记录开始*' +
@@ -51,8 +61,9 @@ const continueChat = async (chat: Chat, text: string): Promise<string> => {
         '*聊天记录结束*' +
         '*信息开始*' +
         `\n${text}\n` +
-        '*信息结束*';
-    const resText = await createTextFromPrompt(prompt);
+        '*信息结束*' +
+        `\n请你直接回复新信息.\n`;
+    const resText = await createTextFromPrompt(prompt, getRandomErrText());
     await chat.createLine({ text: text, role: LINE_ROLE.HUMAN });
     await chat.createLine({ text: resText, role: LINE_ROLE.AI });
     return resText;
@@ -111,13 +122,9 @@ const createResponseForVoice = async (payload: WechatVoiceCreateParams): Promise
     const responseText = await createResponseForText(textPayload);
     const responseFilePath = await convertTextToSpeech(responseText!, foderPath, payload.messageId);
     await delayReply(1, '');
-
     try {
-
         const responseMediaId = await uploadWeChatVoice(responseFilePath, 'audio/mpeg');
-
         await sendWechatVoiceMessage(responseMediaId, payload.userId);
-
         await deleteFileAtPath(inputFilePath);
         await deleteFileAtPath(responseFilePath);
     } catch (e) {
