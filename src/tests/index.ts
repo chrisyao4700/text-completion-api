@@ -4,13 +4,13 @@ import { WechatService } from "../service/wechat.service";
 import { timeDiffMinutes } from "../util/util";
 
 import { convertVoiceToText } from "../util/google";
-import { uploadWeChatVoice } from "../util/wechat";
+import { uploadWeChatMedia } from "../util/wechat";
 import { convertTextToSpeech } from "../util/amazon";
 const main = (async () => {
 
 
    
-    const res = await uploadWeChatVoice('db/temp/voice/23998018530481645.mp3','audio/mpeg');
+    const res = await uploadWeChatMedia('db/temp/voice/23998018530481645.mp3','audio/mpeg');
     console.log(res);
 
     // const path = 'db/temp/voice/fuck.mp3';
