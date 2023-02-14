@@ -6,7 +6,7 @@ const configuration = new Configuration({
 
 const openai = new OpenAIApi(configuration);
 
-export const createTextFromPrompt = async (prompt: string, errText:string): Promise<string> => {
+export const createTextFromPrompt = async (prompt: string, errText: string): Promise<string> => {
     try {
         if (process.env.TEXT_LOGGING === 'true') console.log('Sent out:', prompt);
         const completion = await openai.createCompletion({
@@ -26,5 +26,21 @@ export const createTextFromPrompt = async (prompt: string, errText:string): Prom
         const err = e as Error;
         console.log(e);
         return errText;
+    }
+}
+
+export const createImageFromPrompt = async (prompt: string): Promise<string> => {
+    try {
+        const response = await openai.createImage({
+            prompt: prompt,
+            n: 1,
+            size: "256x256",
+        });
+        const image_url = response.data.data[0].url;
+        return image_url || '';
+    } catch (e) {
+        const err = e as Error;
+        console.log(e);
+        return '';
     }
 }

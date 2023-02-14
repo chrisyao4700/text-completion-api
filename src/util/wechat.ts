@@ -156,11 +156,11 @@ export const downloadWeChatMedia = async (mediaId: string, filePath: string): Pr
     });
 }
 
-export const uploadWeChatVoice = async (filePath: string, type: string): Promise<string> => {
+export const uploadWeChatMedia = async (filePath: string, type: string): Promise<string> => {
     const accessToken = await getWeChatAccessToken();
     const url = `https://api.weixin.qq.com/cgi-bin/media/upload?access_token=${accessToken}&type=voice`;
     const formData = new FormData();
-    formData.append('media', fs.createReadStream(filePath), {type: type});
+    formData.append('media', fs.createReadStream(filePath), { type: type });
 
     const response = await axios.post(url, formData, {
         headers: {
@@ -169,8 +169,8 @@ export const uploadWeChatVoice = async (filePath: string, type: string): Promise
     });
     const { media_id } = response.data;
     return media_id;
-
 }
+
 
 export const sendWechatVoiceMessage = async (mediaId: string, openId: string) => {
     const accessToken = await getWeChatAccessToken();
@@ -179,4 +179,23 @@ export const sendWechatVoiceMessage = async (mediaId: string, openId: string) =>
     const bodyStr = JSON.stringify(payload);
     const response = await sendAxiosRequest(url, 'POST', bodyStr);
     return response;
+}
+
+export const sendWechatImageMessage = async (mediaId: string, openId: string) => {
+    const accessToken = await getWeChatAccessToken();
+    const url = `https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=${accessToken}`;
+    const payload = { "touser": openId, "msgtype": "image", "image": { "media_id": mediaId } };
+    const bodyStr = JSON.stringify(payload);
+    const response = await sendAxiosRequest(url, 'POST', bodyStr);
+    return response;
+}
+
+export const extractStringInsideImageInstruction = (input: string): string => {
+    const pattern = /画画<([^>]*)>/;
+    const match = input.match(pattern);
+    if (match && match[1]) {
+        return match[1];
+    } else {
+        return "";
+    }
 }

@@ -53,21 +53,39 @@ export const deleteFileAtPath = async (filePath: string): Promise<void> => {
 
 export const readFileAsBase64 = (filePath: string): Promise<string> => {
     return new Promise((resolve, reject) => {
-      fs.readFile(filePath, (error, data) => {
-        if (error) {
-          reject(error);
-        }
-        resolve(data.toString('base64'));
-      });
+        fs.readFile(filePath, (error, data) => {
+            if (error) {
+                reject(error);
+            }
+            resolve(data.toString('base64'));
+        });
     });
-  };
-  export const readFileRaw = (filePath: string): Promise<Buffer> => {
+};
+export const readFileRaw = (filePath: string): Promise<Buffer> => {
     return new Promise((resolve, reject) => {
-      fs.readFile(filePath, (error, data) => {
-        if (error) {
-          reject(error);
-        }
-        resolve(data);
-      });
+        fs.readFile(filePath, (error, data) => {
+            if (error) {
+                reject(error);
+            }
+            resolve(data);
+        });
     });
-  };
+};
+
+
+export const downloadImageFromURL = async (url: string, fileName: string): Promise<string> => {
+    const imagePath = `db/temp/image/${fileName}.png`;
+    const writer = fs.createWriteStream(imagePath);
+    const response = await axios({
+        url,
+        method: "GET",
+        responseType: "stream",
+    });
+    response.data.pipe(writer);
+    return new Promise<string>((resolve, reject) => {
+        writer.on("finish", () => {
+            resolve(imagePath);
+        });
+        writer.on("error", reject);
+    });
+}

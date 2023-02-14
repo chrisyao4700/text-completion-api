@@ -4,10 +4,10 @@ import User from '../model/user.model';
 import { LINE_ROLE } from '../model/line.model';
 
 import { convertVoiceToText } from '../util/google';
-import { createTextFromPrompt } from '../util/opai';
+import { createTextFromPrompt, createImageFromPrompt } from '../util/opai';
 import { delayReply, timeDiffMinutes, saveAMRToTempFile, deleteFileAtPath } from '../util/util';
 
-import { downloadWeChatMedia, fetchWeChatMedia, sendWeChatMessage, sendWechatVoiceMessage, uploadWeChatVoice, wechatResponseBuilder } from '../util/wechat';
+import { downloadWeChatMedia, fetchWeChatMedia, sendWeChatMessage, sendWechatVoiceMessage, sendWechatImageMessage, uploadWeChatMedia, wechatResponseBuilder, extractStringInsideImageInstruction } from '../util/wechat';
 import { convertTextToSpeech } from '../util/amazon';
 export type ChatCreateParams = Required<ChatInput>;
 
@@ -107,7 +107,6 @@ const createResponseForText = async (payload: WechatTextCreateParams): Promise<s
 
 const createResponseForVoice = async (payload: WechatVoiceCreateParams): Promise<void> => {
     // const mediaInfo = await fetchWeChatMedia(payload.mediaId);
-
     // const filePath = await saveAMRToTempFile(mediaInfo, payload.messageId);
     const foderPath = `db/temp/voice`;
     const inputFilePath = await downloadWeChatMedia(payload.mediaId, foderPath);
@@ -123,20 +122,38 @@ const createResponseForVoice = async (payload: WechatVoiceCreateParams): Promise
     const responseFilePath = await convertTextToSpeech(responseText!, foderPath, payload.messageId);
     await delayReply(1, '');
     try {
-        const responseMediaId = await uploadWeChatVoice(responseFilePath, 'audio/mpeg');
+        const responseMediaId = await uploadWeChatMedia(responseFilePath, 'audio/mpeg');
         await sendWechatVoiceMessage(responseMediaId, payload.userId);
         await deleteFileAtPath(inputFilePath);
         await deleteFileAtPath(responseFilePath);
     } catch (e) {
         console.log(e);
     }
+}
+const createImageResponse = async (payload: WechatTextCreateParams): Promise<void> => {
 
+
+    try {
+        const responseFilePath = await createImageFromPrompt(payload.text);
+        const responseMediaId = await uploadWeChatMedia(responseFilePath, 'image/png');
+        await sendWechatImageMessage(responseMediaId, payload.userId);
+        await deleteFileAtPath(responseFilePath);
+    } catch (e) {
+        console.log(e);
+    }
 }
 
 export class WechatService {
     static async receiveMessage(payload: WechatTextCreateParams): Promise<string> {
         try {
             //First time receive message
+
+            const pulledText = extractStringInsideImageInstruction(payload.text);
+            if (pulledText !== "") {
+                payload.text = pulledText;
+                createImageResponse(payload).then();
+                return 'success';
+            }
             createResponseForText(payload)
                 .then(responseText => {
                     // const resMessage = wechatResponseBuilder(payload, responseText!);
