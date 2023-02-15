@@ -48,9 +48,13 @@ export default abstract class WechatService {
     abstract DEFAULT_VOICE_LANGUAGE: GoogleLanguageCode;
     abstract DEFAULT_VOICE_RESPONSE_LANGUAGE: AmazonPollyLanguageCode;
     abstract DEFAULT_VOICE_RESPONSE_VOICE: AmazonPollyVoiceId;
+    voiceText: string | null;
+
+    static DEFAULT_FOLDER_PATH = `db/temp/voice`;
 
     constructor(payload: WechatTextCreateParams | WechatVoiceCreateParams) {
         this.payload = payload;
+        this.voiceText = null;;
     }
 
     protected getRandomErrText = () => {
@@ -135,23 +139,32 @@ export default abstract class WechatService {
         }
     }
 
+    protected retrieveVoiceText = async (): Promise<string> => {
+        this.payload = this.payload as WechatVoiceCreateParams;
+
+        const inputFilePath = await downloadWeChatMedia(this.payload.mediaId, WechatService.DEFAULT_FOLDER_PATH);
+        await delayReply(1, '');
+        const text = await convertVoiceToText(inputFilePath, this.DEFAULT_VOICE_LANGUAGE);
+        this.voiceText = text;
+        await deleteFileAtPath(inputFilePath);
+        return text;
+    }
+
     protected createResponseForVoice = async (): Promise<string> => {
         let hasSentRes = false;
-        this.payload = this.payload as WechatVoiceCreateParams;
         try {
-            const foderPath = `db/temp/voice`;
-            const inputFilePath = await downloadWeChatMedia(this.payload.mediaId, foderPath);
-            await delayReply(1, '');
-            const text = await convertVoiceToText(inputFilePath, this.DEFAULT_VOICE_LANGUAGE);
+            if (!this.voiceText) {
+                await this.retrieveVoiceText();
+            }
             this.payload = {
                 userId: this.payload.userId,
-                text: text,
+                text: this.voiceText!,
                 toUserId: this.payload.toUserId,
                 messageId: this.payload.messageId
             }
             const responseText = await this.createResponseForText();
             const responseFilePath = await convertTextToSpeech(responseText!,
-                foderPath,
+                WechatService.DEFAULT_FOLDER_PATH,
                 this.payload.messageId,
                 this.DEFAULT_VOICE_RESPONSE_LANGUAGE,
                 this.DEFAULT_VOICE_RESPONSE_VOICE);
@@ -160,7 +173,7 @@ export default abstract class WechatService {
             const responseMediaId = await uploadWeChatMedia(responseFilePath, 'voice', 'audio/mpeg');
             await sendWechatVoiceMessage(responseMediaId, this.payload.userId);
             hasSentRes = true;
-            await deleteFileAtPath(inputFilePath);
+
             await deleteFileAtPath(responseFilePath);
             return responseText!;
         } catch (e) {
