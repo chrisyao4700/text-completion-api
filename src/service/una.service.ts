@@ -111,6 +111,7 @@ export class UnaService extends WechatService {
         this.payload = this.payload as WechatVoiceCreateParams;
 
         
+        let orgResponseText: string | null = null;
         this.retrieveVoiceText()
             .then((text) => {
                 return sendWeChatMessage(`I heard: ${text}`, this.payload.userId);
@@ -119,7 +120,11 @@ export class UnaService extends WechatService {
                 return this.createResponseForVoice();
             })
             .then((responseText) => {
-                return translateTextEnglishToChinese(responseText!);
+                orgResponseText = responseText;
+                return sendWeChatMessage(responseText!, this.payload.userId);
+            })
+            .then(()=>{
+                return translateTextEnglishToChinese(orgResponseText!);
             })
             .then((translation) => {
                 return sendWeChatMessage(translation, this.payload.userId);
