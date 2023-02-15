@@ -2,7 +2,8 @@ import { Body, Path, Controller, Post, Get, Route, Query, SuccessResponse, Secur
 import { setErrorCode, setResponseCode } from '../util/responseHandler';
 import { Logger } from '../util/logger';
 
-import { WechatTextCreateParams, WechatService, WechatVoiceCreateParams } from '../service/wechat.service';
+import WechatService, { WechatTextCreateParams, WechatVoiceCreateParams } from '../service/wechat.service';
+import { SilverService } from '../service/silver.service';
 
 export type WechatRequestBody = {
     URL?: string, // For voice message
@@ -25,6 +26,7 @@ export class WechatController extends Controller {
     public async create(@Body() requestBody: WechatRequestBody): Promise<string | Error> {
         try {
             const type = requestBody.MsgType;
+
             if (type === 'text') {
                 const wechatInput: WechatTextCreateParams = {
                     userId: requestBody.FromUserName,
@@ -32,12 +34,13 @@ export class WechatController extends Controller {
                     toUserId: requestBody.ToUserName,
                     messageId: requestBody.MsgId
                 };
-                const createResponse = await WechatService.receiveMessage(wechatInput);
+                const service = new SilverService(wechatInput);
+                const createResponse = await service.receiveTextMessage();
                 setResponseCode(this, createResponse, 200);
                 return createResponse;
             }
 
-            if(type === 'voice'){
+            if (type === 'voice') {
                 const wechatInput: WechatVoiceCreateParams = {
                     userId: requestBody.FromUserName,
                     mediaId: requestBody.MediaId!,
@@ -45,8 +48,8 @@ export class WechatController extends Controller {
                     messageId: requestBody.MsgId,
                     mediaFormat: requestBody.Format!
                 };
-
-                const createResponse = await WechatService.receiveVoice(wechatInput);
+                const service = new SilverService(wechatInput);
+                const createResponse = await service.receiveVoiceMessage();
                 setResponseCode(this, createResponse, 200);
                 return createResponse;
             }
