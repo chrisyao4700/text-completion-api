@@ -4,6 +4,7 @@ import { Logger } from '../util/logger';
 
 import WechatService, { WechatTextCreateParams, WechatVoiceCreateParams } from '../service/wechat.service';
 import { SilverService } from '../service/silver.service';
+import { UnaService } from '../service/una.service';
 
 export type WechatRequestBody = {
     URL?: string, // For voice message
@@ -34,10 +35,19 @@ export class WechatController extends Controller {
                     toUserId: requestBody.ToUserName,
                     messageId: requestBody.MsgId
                 };
-                const service = new SilverService(wechatInput);
-                const createResponse = await service.receiveTextMessage();
-                setResponseCode(this, createResponse, 200);
-                return createResponse;
+                if(process.env.CHAT_AGENT_ID === 'UNA'){
+                    const service = new UnaService(wechatInput);
+                    const createResponse = await service.receiveTextMessage();
+                    setResponseCode(this, createResponse, 200);
+                    return createResponse;
+                }
+                if(process.env.CHAT_AGENT_ID === 'SILVER'){
+                    const service = new SilverService(wechatInput);
+                    const createResponse = await service.receiveTextMessage();
+                    setResponseCode(this, createResponse, 200);
+                    return createResponse;
+                }
+                
             }
 
             if (type === 'voice') {
@@ -48,10 +58,18 @@ export class WechatController extends Controller {
                     messageId: requestBody.MsgId,
                     mediaFormat: requestBody.Format!
                 };
-                const service = new SilverService(wechatInput);
-                const createResponse = await service.receiveVoiceMessage();
-                setResponseCode(this, createResponse, 200);
-                return createResponse;
+                if(process.env.CHAT_AGENT_ID === 'UNA'){
+                    const service = new UnaService(wechatInput);
+                    const createResponse = await service.receiveVoiceMessage();
+                    setResponseCode(this, createResponse, 200);
+                    return createResponse;
+                }
+                if(process.env.CHAT_AGENT_ID === 'SILVER'){
+                    const service = new SilverService(wechatInput);
+                    const createResponse = await service.receiveVoiceMessage();
+                    setResponseCode(this, createResponse, 200);
+                    return createResponse;
+                }
             }
 
 

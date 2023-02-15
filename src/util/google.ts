@@ -1,7 +1,7 @@
 import * as speech from '@google-cloud/speech';
 import fs from'fs';
 import path from 'path';
-const client = new speech.SpeechClient(
+const s2tclient = new speech.SpeechClient(
    {
         keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS,
    }
@@ -22,7 +22,7 @@ export const convertVoiceToText = async (fileName: string): Promise<string> => {
         config: config,
     };
     try {
-        const [response] = await client.recognize(request);
+        const [response] = await s2tclient.recognize(request);
         let transcript = ''
         if (response && response.results) {
              transcript = response.results
@@ -35,3 +35,10 @@ export const convertVoiceToText = async (fileName: string): Promise<string> => {
         return 'Error transcribing audio';
       }
 }
+const {Translate} = require('@google-cloud/translate').v2;
+
+export const translateTextEnglishToChinese = async (text: string): Promise<string> => {
+    const translate = new Translate();
+    const [translation] = await translate.translate(text, 'zh');
+    return translation;
+  }

@@ -35,13 +35,13 @@ export class LineService {
                     .join('\n');
 
                 const prompt = `${previousLines.length > 0 ? "Please provide response base on the chat history and the new message\nCHAT HISTORY:\n\n" : ''}${historyText}${previousLines.length > 0 ? "\n\nNEW MESSAGE:\n" : ''}${text}`;
-                const resText = await createTextFromPrompt(prompt, 'no response');
+                const resText = await createTextFromPrompt(prompt, 'no response',[]);
 
                 await chat.createLine({ text, role: LINE_ROLE.HUMAN });
 
                 /* Create title */
                 if (previousLines.length >= 2 && chat.title === "New Chat") {
-                    const summary = await createTextFromPrompt(`${historyText}\n\nPlease create a title based on the chat, and reply the title only.`,'no response');
+                    const summary = await createTextFromPrompt(`${historyText}\n\nPlease create a title based on the chat, and reply the title only.`,'no response',[]);
                     await chat.update({ title: summary });
                 }
 

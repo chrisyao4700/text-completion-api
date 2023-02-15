@@ -156,17 +156,17 @@ export const downloadWeChatMedia = async (mediaId: string, filePath: string): Pr
     });
 }
 
-export const uploadWeChatMedia = async (filePath: string, type: string, contentType?:string): Promise<string> => {
+export const uploadWeChatMedia = async (filePath: string, type: string, contentType?: string): Promise<string> => {
     const accessToken = await getWeChatAccessToken();
     const url = `https://api.weixin.qq.com/cgi-bin/media/upload?access_token=${accessToken}&type=${type}`;
     const formData = new FormData();
     // formData.append('media', fs.createReadStream(filePath), { type: type });
-    if(contentType){
-        formData.append('media', fs.createReadStream(filePath),{type:contentType});
-    }else{
+    if (contentType) {
+        formData.append('media', fs.createReadStream(filePath), { type: contentType });
+    } else {
         formData.append('media', fs.createReadStream(filePath));
     }
-    
+
 
     const response = await axios.post(url, formData, {
         headers: {
@@ -235,8 +235,8 @@ export const sendWechatVideoMessage = async (mediaId: string, openId: string) =>
     return response;
 }
 
-export const extractStringInsideImageInstruction = (input: string): string => {
-    const pattern = /画画<([^>]*)>/;
+export const extractStringInsideImageInstruction = (input: string, identifier: string): string => {
+    const pattern = new RegExp(`${identifier}<([^>]*)>`);
     const match = input.match(pattern);
     if (match && match[1]) {
         return match[1];

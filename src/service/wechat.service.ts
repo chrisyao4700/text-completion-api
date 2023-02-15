@@ -42,6 +42,7 @@ export default abstract class WechatService {
     abstract HISTORY_CHAT_PREFIX: string;
     abstract HISTORY_CHAT_MIDDLE: string;
     abstract HISTORY_CHAT_SUFFIX: string;
+    abstract TEXT_REMOVERS: string[];
 
     abstract ERROR_TEXT: string[]
 
@@ -57,7 +58,7 @@ export default abstract class WechatService {
         const prompt = this.NEW_CHAT_PREFIX +
             `\n${text}\n` +
             this.NEW_CHAT_SUFFIX;
-        const resText = await createTextFromPrompt(prompt, this.getRandomErrText());
+        const resText = await createTextFromPrompt(prompt, this.getRandomErrText(),this.TEXT_REMOVERS);
         await chat.createLine({ text: text, role: LINE_ROLE.HUMAN });
         await chat.createLine({ text: resText, role: LINE_ROLE.AI });
         return resText;
@@ -73,7 +74,7 @@ export default abstract class WechatService {
             this.HISTORY_CHAT_MIDDLE +
             `\n${text}\n` +
             this.HISTORY_CHAT_SUFFIX;
-        const resText = await createTextFromPrompt(prompt, this.getRandomErrText());
+        const resText = await createTextFromPrompt(prompt, this.getRandomErrText(),this.TEXT_REMOVERS);
         await chat.createLine({ text: text, role: LINE_ROLE.HUMAN });
         await chat.createLine({ text: resText, role: LINE_ROLE.AI });
         return resText;

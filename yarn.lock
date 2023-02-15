@@ -818,6 +818,18 @@
     stream-events "^1.0.4"
     uuid "^9.0.0"
 
+"@google-cloud/translate@^7.1.0":
+  version "7.1.0"
+  resolved "https://registry.yarnpkg.com/@google-cloud/translate/-/translate-7.1.0.tgz#388e989eb2ccac9dcd9e43afcdca6b6ddc712b7b"
+  integrity sha512-P41XfhXPPK/X+4GiDuqOkZbjhYDRCo4WPDJp0rauSOUdyCAsrqmkvFSwJThJeafz/EvPvTtzeFbj/Kwn/fl70A==
+  dependencies:
+    "@google-cloud/common" "^4.0.0"
+    "@google-cloud/promisify" "^3.0.0"
+    arrify "^2.0.0"
+    extend "^3.0.2"
+    google-gax "^3.5.2"
+    is-html "^2.0.0"
+
 "@grpc/grpc-js@~1.8.0":
   version "1.8.8"
   resolved "https://registry.yarnpkg.com/@grpc/grpc-js/-/grpc-js-1.8.8.tgz#a7c6765d0302f47ba67c0ce3cb79718d6b028248"
@@ -2703,6 +2715,11 @@ has@^1.0.3:
   dependencies:
     function-bind "^1.1.1"
 
+html-tags@^3.0.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/html-tags/-/html-tags-3.2.0.tgz#dbb3518d20b726524e4dd43de397eb0a95726961"
+  integrity sha512-vy7ClnArOZwCnqZgvv+ddgHgJiAFXe3Ge9ML5/mBctVJoUoYPCdxVucOywjDARn6CVoh3dRSFdPHy2sX80L0Wg==
+
 http-auth@^4.2.0:
   version "4.2.0"
   resolved "https://registry.yarnpkg.com/http-auth/-/http-auth-4.2.0.tgz#9bb119ba22273b63a50796363d298eed3bdbadae"
@@ -2932,6 +2949,13 @@ is-glob@^4.0.1, is-glob@~4.0.1:
   integrity sha512-xelSayHH36ZgE7ZWhli7pW34hNbNl8Ojv5KVmkJD4hBdD3th8Tfk9vYasLM+mXWOZhFkgZfxhLSnrwRr4elSSg==
   dependencies:
     is-extglob "^2.1.1"
+
+is-html@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/is-html/-/is-html-2.0.0.tgz#b3ab2e27ccb7a12235448f51f115a6690f435fc8"
+  integrity sha512-S+OpgB5i7wzIue/YSE5hg0e5ZYfG3hhpNh9KGl6ayJ38p7ED6wxQLd1TV91xHpcTvw90KMJ9EwN3F/iNflHBVg==
+  dependencies:
+    html-tags "^3.0.0"
 
 is-lambda@^1.0.1:
   version "1.0.1"
