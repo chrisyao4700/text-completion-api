@@ -3,12 +3,12 @@ import Chat, { ChatInput, ChatOutput } from '../model/chat.model';
 import User from '../model/user.model';
 import { LINE_ROLE } from '../model/line.model';
 
-import { convertVoiceToText } from '../util/google';
+import { convertVoiceToText, GoogleLanguageCode } from '../util/google';
 import { createTextFromPrompt, createImageFromPrompt } from '../util/opai';
 import { delayReply, timeDiffMinutes, downloadImageFromURL, deleteFileAtPath, getRandomIntegerFromRange } from '../util/util';
 
 import { downloadWeChatMedia, sendWechatVideoMessage, sendWeChatMessage, sendWechatVoiceMessage, sendWechatImageMessage, uploadWeChatMedia, wechatResponseBuilder, extractStringInsideImageInstruction } from '../util/wechat';
-import { convertTextToSpeech } from '../util/amazon';
+import { AmazonPollyLanguageCode, AmazonPollyVoiceId, convertTextToSpeech } from '../util/amazon';
 export type ChatCreateParams = Required<ChatInput>;
 
 export type WechatTextCreateParams = {
@@ -44,7 +44,10 @@ export default abstract class WechatService {
     abstract HISTORY_CHAT_SUFFIX: string;
     abstract TEXT_REMOVERS: string[];
 
-    abstract ERROR_TEXT: string[]
+    abstract ERROR_TEXT: string[];
+    abstract DEFAULT_VOICE_LANGUAGE: GoogleLanguageCode;
+    abstract DEFAULT_VOICE_RESPONSE_LANGUAGE: AmazonPollyLanguageCode;
+    abstract DEFAULT_VOICE_RESPONSE_VOICE: AmazonPollyVoiceId;
 
     constructor(payload: WechatTextCreateParams | WechatVoiceCreateParams) {
         this.payload = payload;
@@ -58,7 +61,7 @@ export default abstract class WechatService {
         const prompt = this.NEW_CHAT_PREFIX +
             `\n${text}\n` +
             this.NEW_CHAT_SUFFIX;
-        const resText = await createTextFromPrompt(prompt, this.getRandomErrText(),this.TEXT_REMOVERS);
+        const resText = await createTextFromPrompt(prompt, this.getRandomErrText(), this.TEXT_REMOVERS);
         await chat.createLine({ text: text, role: LINE_ROLE.HUMAN });
         await chat.createLine({ text: resText, role: LINE_ROLE.AI });
         return resText;
@@ -74,7 +77,7 @@ export default abstract class WechatService {
             this.HISTORY_CHAT_MIDDLE +
             `\n${text}\n` +
             this.HISTORY_CHAT_SUFFIX;
-        const resText = await createTextFromPrompt(prompt, this.getRandomErrText(),this.TEXT_REMOVERS);
+        const resText = await createTextFromPrompt(prompt, this.getRandomErrText(), this.TEXT_REMOVERS);
         await chat.createLine({ text: text, role: LINE_ROLE.HUMAN });
         await chat.createLine({ text: resText, role: LINE_ROLE.AI });
         return resText;
@@ -139,7 +142,7 @@ export default abstract class WechatService {
             const foderPath = `db/temp/voice`;
             const inputFilePath = await downloadWeChatMedia(this.payload.mediaId, foderPath);
             await delayReply(1, '');
-            const text = await convertVoiceToText(inputFilePath);
+            const text = await convertVoiceToText(inputFilePath, this.DEFAULT_VOICE_LANGUAGE);
             this.payload = {
                 userId: this.payload.userId,
                 text: text,
@@ -147,7 +150,11 @@ export default abstract class WechatService {
                 messageId: this.payload.messageId
             }
             const responseText = await this.createResponseForText();
-            const responseFilePath = await convertTextToSpeech(responseText!, foderPath, this.payload.messageId);
+            const responseFilePath = await convertTextToSpeech(responseText!,
+                foderPath,
+                this.payload.messageId,
+                this.DEFAULT_VOICE_RESPONSE_LANGUAGE,
+                this.DEFAULT_VOICE_RESPONSE_VOICE);
             await delayReply(1, '');
 
             const responseMediaId = await uploadWeChatMedia(responseFilePath, 'voice', 'audio/mpeg');

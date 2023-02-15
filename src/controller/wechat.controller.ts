@@ -35,19 +35,19 @@ export class WechatController extends Controller {
                     toUserId: requestBody.ToUserName,
                     messageId: requestBody.MsgId
                 };
-                if(process.env.CHAT_AGENT_ID === 'UNA'){
+                if (process.env.CHAT_AGENT_ID === 'UNA') {
                     const service = new UnaService(wechatInput);
                     const createResponse = await service.receiveTextMessage();
                     setResponseCode(this, createResponse, 200);
                     return createResponse;
                 }
-                if(process.env.CHAT_AGENT_ID === 'SILVER'){
+                if (process.env.CHAT_AGENT_ID === 'SILVER') {
                     const service = new SilverService(wechatInput);
                     const createResponse = await service.receiveTextMessage();
                     setResponseCode(this, createResponse, 200);
                     return createResponse;
                 }
-                
+
             }
 
             if (type === 'voice') {
@@ -58,13 +58,13 @@ export class WechatController extends Controller {
                     messageId: requestBody.MsgId,
                     mediaFormat: requestBody.Format!
                 };
-                if(process.env.CHAT_AGENT_ID === 'UNA'){
+                if (process.env.CHAT_AGENT_ID === 'UNA') {
                     const service = new UnaService(wechatInput);
                     const createResponse = await service.receiveVoiceMessage();
                     setResponseCode(this, createResponse, 200);
                     return createResponse;
                 }
-                if(process.env.CHAT_AGENT_ID === 'SILVER'){
+                if (process.env.CHAT_AGENT_ID === 'SILVER') {
                     const service = new SilverService(wechatInput);
                     const createResponse = await service.receiveVoiceMessage();
                     setResponseCode(this, createResponse, 200);

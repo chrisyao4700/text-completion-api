@@ -11,16 +11,22 @@ AWS.config.update({
 // Create an instance of the Amazon Polly client
 const polly = new AWS.Polly({ apiVersion: "2016-06-10" });
 
-// Define the text to convert to speech
-// const text = "Hello, this is a test of the Amazon Polly TTS API";
 
-// Define the parameters for the TTS request
-export const convertTextToSpeech = async (text: string, filePath: string, identifier:string): Promise<string> => {
+export enum AmazonPollyLanguageCode {
+    CHINESE = 'cmn-CN',
+    ENGLISH = 'en-US'
+}
+export enum AmazonPollyVoiceId {
+    ZHIYU = 'Zhiyu',//Chinese
+    ZECHARIAH = 'Zechariah',//English
+    JOANNA = 'Joanna',//English
+}
+export const convertTextToSpeech = async (text: string, filePath: string, identifier: string, languageCode: AmazonPollyLanguageCode, voiceId: AmazonPollyVoiceId): Promise<string> => {
     const params = {
         OutputFormat: "mp3",
         Text: text,
-        VoiceId: "Zhiyu",
-        LanguageCode: "cmn-CN",
+        VoiceId: voiceId,
+        LanguageCode: languageCode,
         Engine: "neural"
     };
 

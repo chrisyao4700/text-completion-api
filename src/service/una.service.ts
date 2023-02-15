@@ -3,12 +3,12 @@ import Chat, { ChatInput, ChatOutput } from '../model/chat.model';
 import User from '../model/user.model';
 import { LINE_ROLE } from '../model/line.model';
 
-import { convertVoiceToText, translateTextEnglishToChinese } from '../util/google';
+import { GoogleLanguageCode, translateTextEnglishToChinese } from '../util/google';
 import { createTextFromPrompt, createImageFromPrompt } from '../util/opai';
 import { delayReply, timeDiffMinutes, downloadImageFromURL, deleteFileAtPath, getRandomIntegerFromRange } from '../util/util';
 
 import { downloadWeChatMedia, sendWechatVideoMessage, sendWeChatMessage, sendWechatVoiceMessage, sendWechatImageMessage, uploadWeChatMedia, wechatResponseBuilder, extractStringInsideImageInstruction } from '../util/wechat';
-import { convertTextToSpeech } from '../util/amazon';
+import { convertTextToSpeech, AmazonPollyLanguageCode, AmazonPollyVoiceId } from '../util/amazon';
 import WechatService, { WechatTextCreateParams, WechatVoiceCreateParams } from './wechat.service';
 
 
@@ -55,7 +55,11 @@ export class UnaService extends WechatService {
         `Using English instead of Chinese will make our communication clearer and more efficient.`
     ]
 
+    DEFAULT_VOICE_LANGUAGE: GoogleLanguageCode = GoogleLanguageCode.ENGLISH;
     // VIDEO_IDENTIFER = "Video self introduction"
+
+    DEFAULT_VOICE_RESPONSE_LANGUAGE: AmazonPollyLanguageCode = AmazonPollyLanguageCode.ENGLISH;
+    DEFAULT_VOICE_RESPONSE_VOICE: AmazonPollyVoiceId = AmazonPollyVoiceId.JOANNA;
 
     constructor(payload: WechatTextCreateParams | WechatVoiceCreateParams) {
         super(payload);

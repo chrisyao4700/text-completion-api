@@ -6,7 +6,12 @@ const s2tclient = new speech.SpeechClient(
         keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS,
    }
 );
-export const convertVoiceToText = async (fileName: string): Promise<string> => {
+
+export enum GoogleLanguageCode{
+    ENGLISH = 'en-US',
+    CHINESE = 'zh-CN'
+}
+export const convertVoiceToText = async (fileName: string, languageCode:GoogleLanguageCode): Promise<string> => {
     const realPath = path.resolve(fileName);
     const content = fs.readFileSync(realPath).toString('base64');
     const audio = {
@@ -15,7 +20,7 @@ export const convertVoiceToText = async (fileName: string): Promise<string> => {
     const config:speech.protos.google.cloud.speech.v1.IRecognitionConfig = {
         encoding: 'AMR',
         sampleRateHertz: 8000,
-        languageCode: 'zh-CN',
+        languageCode: languageCode,
     };
     const request:speech.protos.google.cloud.speech.v1.IRecognizeRequest = {
         audio: audio,

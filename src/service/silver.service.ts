@@ -3,12 +3,12 @@ import Chat, { ChatInput, ChatOutput } from '../model/chat.model';
 import User from '../model/user.model';
 import { LINE_ROLE } from '../model/line.model';
 
-import { convertVoiceToText } from '../util/google';
+import { GoogleLanguageCode } from '../util/google';
 import { createTextFromPrompt, createImageFromPrompt } from '../util/opai';
 import { delayReply, timeDiffMinutes, downloadImageFromURL, deleteFileAtPath, getRandomIntegerFromRange } from '../util/util';
 
 import { downloadWeChatMedia, sendWechatVideoMessage, sendWeChatMessage, sendWechatVoiceMessage, sendWechatImageMessage, uploadWeChatMedia, wechatResponseBuilder, extractStringInsideImageInstruction } from '../util/wechat';
-import { convertTextToSpeech } from '../util/amazon';
+import { convertTextToSpeech, AmazonPollyLanguageCode, AmazonPollyVoiceId } from '../util/amazon';
 import WechatService, { WechatTextCreateParams, WechatVoiceCreateParams } from './wechat.service';
 
 
@@ -46,6 +46,11 @@ export class SilverService extends WechatService {
     ]
     DRAW_IDENTIFER = "画画";
     VIDEO_IDENTIFER = "视频自我介绍";
+
+    DEFAULT_VOICE_LANGUAGE: GoogleLanguageCode = GoogleLanguageCode.CHINESE;
+    DEFAULT_VOICE_RESPONSE_LANGUAGE: AmazonPollyLanguageCode = AmazonPollyLanguageCode.CHINESE;
+    DEFAULT_VOICE_RESPONSE_VOICE: AmazonPollyVoiceId = AmazonPollyVoiceId.ZHIYU;
+
     constructor(payload: WechatTextCreateParams | WechatVoiceCreateParams) {
         super(payload);
     }
