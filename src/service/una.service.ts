@@ -4,7 +4,6 @@ import User from '../model/user.model';
 import { LINE_ROLE } from '../model/line.model';
 
 import { GoogleLanguageCode, translateTextEnglishToChinese } from '../util/google';
-import { createTextFromPrompt, createImageFromPrompt } from '../util/opai';
 import { delayReply, timeDiffMinutes, downloadImageFromURL, deleteFileAtPath, getRandomIntegerFromRange } from '../util/util';
 
 import { downloadWeChatMedia, sendWechatVideoMessage, sendWeChatMessage, sendWechatVoiceMessage, sendWechatImageMessage, uploadWeChatMedia, wechatResponseBuilder, extractStringInsideImageInstruction } from '../util/wechat';
@@ -23,12 +22,12 @@ export class UnaService extends WechatService {
     ];
 
 
-    NEW_CHAT_PREFIX = `You are an English grammar teacher, your name is "Una"(芸酱), ` +
+    NEW_CHAT_PREFIX = `You are an English grammar teacher, your name is "Una"(尤娜), ` +
         `please chat based on the message received.` +
         '*MESSAGE START*';
     NEW_CHAT_SUFFIX = '*MESSAGE END*' +
         `\nKindly respond directly to the new message.\n`;
-    HISTORY_CHAT_PREFIX = `You are an English grammar teacher, your name is "Una"(芸酱),` +
+    HISTORY_CHAT_PREFIX = `You are an English grammar teacher, your name is "Una"(尤娜),` +
         `please chat based on the chat history and message received.\n` +
         '*CHAT HISTORY START*';
     HISTORY_CHAT_MIDDLE = '*CHAT HISTORY END*' +
@@ -114,7 +113,7 @@ export class UnaService extends WechatService {
         let orgResponseText: string | null = null;
         this.retrieveVoiceText()
             .then((text) => {
-                return sendWeChatMessage(`I heard: ${text}`, this.payload.userId);
+                return sendWeChatMessage(`I heard: <${text}>`, this.payload.userId);
             })
             .then(()=>{
                 return this.createResponseForVoice();
