@@ -135,7 +135,7 @@ export default abstract class WechatService {
         }
     }
 
-    protected createResponseForVoice = async (): Promise<void> => {
+    protected createResponseForVoice = async (): Promise<string> => {
         let hasSentRes = false;
         this.payload = this.payload as WechatVoiceCreateParams;
         try {
@@ -162,11 +162,17 @@ export default abstract class WechatService {
             hasSentRes = true;
             await deleteFileAtPath(inputFilePath);
             await deleteFileAtPath(responseFilePath);
+            return responseText!;
         } catch (e) {
-            if (!hasSentRes) {
-                await sendWeChatMessage(this.getRandomErrText(), this.payload.userId);
-            }
             console.log(e);
+            const errText = this.getRandomErrText();
+            if (!hasSentRes) {
+
+                await sendWeChatMessage(errText, this.payload.userId);
+                return errText;
+            }
+            return errText;
+
         }
     }
 
