@@ -97,10 +97,11 @@ export class UnaService extends WechatService {
             }
 
             let orgResponseText: string | null = null;
-            this.reviseEnglishText().
-                then(() => {
-                    return this.createResponseForText();
-                })
+            // this.reviseEnglishText().
+            //     then(() => {
+            //         return this.createResponseForText();
+            //     })
+            this.createResponseForText()
                 .then(responseText => {
                     orgResponseText = responseText;
                     return sendWeChatMessage(responseText!, this.payload.userId);
@@ -112,7 +113,7 @@ export class UnaService extends WechatService {
                     return sendWeChatMessage(translation, this.payload.userId);
                 })
                 .then();
-            console.log('IM HERE SUCCESS!!!!');
+
             return 'success';
         } catch (error) {
             const errText = wechatResponseBuilder(this.payload, 'Error, please try again later');
