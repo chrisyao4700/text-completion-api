@@ -9,7 +9,7 @@ import { delayReply, timeDiffMinutes, downloadImageFromURL, deleteFileAtPath, ge
 import { downloadWeChatMedia, sendWechatVideoMessage, sendWeChatMessage, sendWechatVoiceMessage, sendWechatImageMessage, uploadWeChatMedia, wechatResponseBuilder, extractStringInsideImageInstruction } from '../util/wechat';
 import { convertTextToSpeech, AmazonPollyLanguageCode, AmazonPollyVoiceId } from '../util/amazon';
 import WechatService, { WechatTextCreateParams, WechatVoiceCreateParams } from './wechat.service';
-import { grammarifySentence } from '../util/grammarly';
+import { createTextFromPrompt } from '../util/opai';
 
 
 const isChinese = (str: string): boolean => {
@@ -68,8 +68,11 @@ export class UnaService extends WechatService {
         return this.CHINESE_REPLYERS[getRandomIntegerFromRange(0, this.CHINESE_REPLYERS.length - 1)];
     }
 
-    private reviseEnglishText(text: string): string {
-        return grammarifySentence(text);
+    private async reviseEnglishText(text: string): Promise<string> {
+        const prompt = `Please revise the following text:`+
+        `\n${text}\n`;
+        const revisedText = await createTextFromPrompt(prompt,text,[]);
+        return revisedText;
     }
     public async receiveTextMessage(): Promise<string> {
         try {
