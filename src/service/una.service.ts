@@ -68,15 +68,16 @@ export class UnaService extends WechatService {
         return this.CHINESE_REPLYERS[getRandomIntegerFromRange(0, this.CHINESE_REPLYERS.length - 1)];
     }
 
-    private async reviseEnglishText(): Promise<void> {
+    private async reviseEnglishText(): Promise<string> {
         this.payload = this.payload as WechatTextCreateParams;
         if (this.payload.text && this.payload.text.length >= 25) {
             const prompt = `Please revise the following text:` +
                 `\n${this.payload.text}\n`;
             const revisedText = await createTextFromPrompt(prompt, this.payload.text, []);
-            await sendWeChatMessage(`I think this way would be better: ${revisedText}`, this.payload.userId);
+            await sendWeChatMessage(`I revised your last message, do you think this way would be better? <${revisedText}>`, this.payload.userId);
+            return revisedText;
         } else {
-            return;
+            return '';
         }
     }
     public async receiveTextMessage(): Promise<string> {
@@ -97,11 +98,11 @@ export class UnaService extends WechatService {
             }
 
             let orgResponseText: string | null = null;
-            // this.reviseEnglishText().
-            //     then(() => {
-            //         return this.createResponseForText();
-            //     })
-            this.createResponseForText()
+            this.reviseEnglishText().
+                then((revi) => {
+                    console.log(revi);
+                    return this.createResponseForText();
+                })
                 .then(responseText => {
                     orgResponseText = responseText;
                     return sendWeChatMessage(responseText!, this.payload.userId);
@@ -114,6 +115,7 @@ export class UnaService extends WechatService {
                 })
                 .then();
 
+            console.log('i reached');
             return 'success';
         } catch (error) {
             const errText = wechatResponseBuilder(this.payload, 'Error, please try again later');
