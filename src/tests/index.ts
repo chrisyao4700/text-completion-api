@@ -1,12 +1,14 @@
 // import Chat from "../model/chat.model";
 require('dotenv').config();
 
-import { grammarifySentence } from "../util/grammarly";
+const isChinese = (str: string): boolean => {
+    return /^[\u4e00-\u9fa5\u3400-\u4DBF\u20000-\u2A6DF\u2A700-\u2B73F\u2B740-\u2B81F\u2B820-\u2CEAF\uF900-\uFAFF\u3000-\u303F\uFF00-\uFFEF]+$/.test(str);
+};
 const main = (async () => {
 
-    const sentence = "im wont be at home in time. And ill be latttttte";
-    const res = grammarifySentence(sentence);
-    console.log(res);
+    const text = "你好？？？";
+    console.log(isChinese(text));
+   
     // try{
     //     const description= '银是一个人工智能机器人，它使用了达芬奇3号引擎，因此能够完成许多任务。银具有高度的语言理解能力和学习能力，可以与用户进行对话，回答问题，执行命令等。它是一个先进的人工智能系统，旨在帮助人们更好地处理信息，提高工作效率。'
     // const media_id = await uplaodWechatConsistentVideo('db/temp/video/self_interduction.mp4', '银的自我介绍', description);

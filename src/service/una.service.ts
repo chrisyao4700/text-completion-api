@@ -13,7 +13,7 @@ import { createTextFromPrompt } from '../util/opai';
 
 
 const isChinese = (str: string): boolean => {
-    return /^[\u4e00-\u9fa5]+$/.test(str);
+    return /^[\u4e00-\u9fa5\u3400-\u4DBF\u20000-\u2A6DF\u2A700-\u2B73F\u2B740-\u2B81F\u2B820-\u2CEAF\uF900-\uFAFF\u3000-\u303F\uFF00-\uFFEF]+$/.test(str);
 };
 
 export class UnaService extends WechatService {
@@ -81,7 +81,6 @@ export class UnaService extends WechatService {
     }
     public async receiveTextMessage(): Promise<string> {
         try {
-            //First time receive message
             this.payload = this.payload as WechatTextCreateParams;
             if (getRandomIntegerFromRange(0, 100) === 66) {
                 this.createDrawingInstruction().then();
@@ -92,14 +91,12 @@ export class UnaService extends WechatService {
                 this.createImageResponse().then();
                 return 'success';
             }
-
             if (isChinese(this.payload.text)) {
                 sendWeChatMessage(this.getRandomChineseReplyer(), this.payload.userId);
                 return 'success';
             }
 
             let orgResponseText: string | null = null;
-
             this.reviseEnglishText().
                 then(() => {
                     return this.createResponseForText();
@@ -115,6 +112,7 @@ export class UnaService extends WechatService {
                     return sendWeChatMessage(translation, this.payload.userId);
                 })
                 .then();
+            console.log('IM HERE SUCCESS!!!!');
             return 'success';
         } catch (error) {
             const errText = wechatResponseBuilder(this.payload, 'Error, please try again later');
