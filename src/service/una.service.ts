@@ -68,11 +68,16 @@ export class UnaService extends WechatService {
         return this.CHINESE_REPLYERS[getRandomIntegerFromRange(0, this.CHINESE_REPLYERS.length - 1)];
     }
 
-    private async reviseEnglishText(text: string): Promise<string> {
-        const prompt = `Please revise the following text:`+
-        `\n${text}\n`;
-        const revisedText = await createTextFromPrompt(prompt,text,[]);
-        return revisedText;
+    private async reviseEnglishText(): Promise<void> {
+        this.payload = this.payload as WechatTextCreateParams;
+        if (this.payload.text && this.payload.text.length >= 25) {
+            const prompt = `Please revise the following text:` +
+                `\n${this.payload.text}\n`;
+            const revisedText = await createTextFromPrompt(prompt, this.payload.text, []);
+            await sendWeChatMessage(`I think this way would be better: ${revisedText}`, this.payload.userId);
+        } else {
+            return;
+        }
     }
     public async receiveTextMessage(): Promise<string> {
         try {
@@ -94,10 +99,11 @@ export class UnaService extends WechatService {
             }
 
             let orgResponseText: string | null = null;
-            if (await this.reviseEnglishText(this.payload.text) !== this.payload.text) {
-                await sendWeChatMessage(`I think this way would be better: ${this.reviseEnglishText(this.payload.text)}`, this.payload.userId);
-            }
-            this.createResponseForText()
+
+            this.reviseEnglishText().
+                then(() => {
+                    return this.createResponseForText();
+                })
                 .then(responseText => {
                     orgResponseText = responseText;
                     return sendWeChatMessage(responseText!, this.payload.userId);
