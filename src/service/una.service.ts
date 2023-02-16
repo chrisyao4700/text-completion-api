@@ -9,6 +9,7 @@ import { delayReply, timeDiffMinutes, downloadImageFromURL, deleteFileAtPath, ge
 import { downloadWeChatMedia, sendWechatVideoMessage, sendWeChatMessage, sendWechatVoiceMessage, sendWechatImageMessage, uploadWeChatMedia, wechatResponseBuilder, extractStringInsideImageInstruction } from '../util/wechat';
 import { convertTextToSpeech, AmazonPollyLanguageCode, AmazonPollyVoiceId } from '../util/amazon';
 import WechatService, { WechatTextCreateParams, WechatVoiceCreateParams } from './wechat.service';
+import { grammarifySentence } from '../util/grammarly';
 
 
 const isChinese = (str: string): boolean => {
@@ -66,6 +67,10 @@ export class UnaService extends WechatService {
     private getRandomChineseReplyer(): string {
         return this.CHINESE_REPLYERS[getRandomIntegerFromRange(0, this.CHINESE_REPLYERS.length - 1)];
     }
+
+    private reviseEnglishText(text: string): string {
+        return grammarifySentence(text);
+    }
     public async receiveTextMessage(): Promise<string> {
         try {
             //First time receive message
@@ -86,6 +91,9 @@ export class UnaService extends WechatService {
             }
 
             let orgResponseText: string | null = null;
+            if (this.reviseEnglishText(this.payload.text) !== this.payload.text) {
+                await sendWeChatMessage(`I think this way would be better: ${this.reviseEnglishText(this.payload.text)}`, this.payload.userId);
+            }
             this.createResponseForText()
                 .then(responseText => {
                     orgResponseText = responseText;
@@ -93,7 +101,6 @@ export class UnaService extends WechatService {
                 })
                 .then(() => {
                     return translateTextEnglishToChinese(orgResponseText!);
-
                 })
                 .then(translation => {
                     return sendWeChatMessage(translation, this.payload.userId);
@@ -109,20 +116,20 @@ export class UnaService extends WechatService {
     public async receiveVoiceMessage(): Promise<string> {
         this.payload = this.payload as WechatVoiceCreateParams;
 
-        
+
         let orgResponseText: string | null = null;
         this.retrieveVoiceText()
             .then((text) => {
                 return sendWeChatMessage(`I heard: <${text}>`, this.payload.userId);
             })
-            .then(()=>{
+            .then(() => {
                 return this.createResponseForVoice();
             })
             .then((responseText) => {
                 orgResponseText = responseText;
                 return sendWeChatMessage(responseText!, this.payload.userId);
             })
-            .then(()=>{
+            .then(() => {
                 return translateTextEnglishToChinese(orgResponseText!);
             })
             .then((translation) => {
