@@ -94,7 +94,7 @@ export class UnaService extends WechatService {
             }
 
             let orgResponseText: string | null = null;
-            if (this.reviseEnglishText(this.payload.text) !== this.payload.text) {
+            if (await this.reviseEnglishText(this.payload.text) !== this.payload.text) {
                 await sendWeChatMessage(`I think this way would be better: ${this.reviseEnglishText(this.payload.text)}`, this.payload.userId);
             }
             this.createResponseForText()
