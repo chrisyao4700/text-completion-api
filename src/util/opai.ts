@@ -40,7 +40,7 @@ export const createImageFromPrompt = async (prompt: string): Promise<string> => 
         const response = await openai.createImage({
             prompt: prompt,
             n: 1,
-            size: "256x256",
+            size: "1024x1024",
         });
         const image_url = response.data.data[0].url;
         return image_url || '';

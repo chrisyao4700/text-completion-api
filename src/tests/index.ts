@@ -6,7 +6,7 @@ const isChinese = (str: string): boolean => {
 };
 const main = (async () => {
 
-    const text = "你好？？？";
+    const text = "ni你好？？？";
     console.log(isChinese(text));
    
     // try{
