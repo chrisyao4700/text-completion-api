@@ -3,7 +3,7 @@ import { OutputFormat, ResultReason, CancellationReason, CancellationDetails, Sp
 
 
 export enum AZURE_VOICE_NAMES {
-    CN_GIRL_MADARIN='zh-CN-XiaoxiaoNeural',
+    CN_GIRL_MADARIN='zh-CN-XiaoshuangNeural',
     CN_LADY_TAIWAN='zh-TW-HsiaoChenNeural',
     CN_LADY_DONGBEI='zh-CN-liaoning-XiaobeiNeural',
     US_LADY='en-US-JaneNeural'

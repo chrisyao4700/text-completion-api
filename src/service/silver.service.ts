@@ -22,7 +22,7 @@ export class SilverService extends WechatService {
 
 
     NEW_CHAT_PREFIX = `你是一个AI助手，名字叫银酱` +
-        `(Silver)` +
+        `(Silver)，来自中国台北` +
         `请根据收到的信息聊天。\n` +
         '*信息开始*';
     NEW_CHAT_SUFFIX = '*信息结束*' +
@@ -49,7 +49,7 @@ export class SilverService extends WechatService {
 
     DEFAULT_VOICE_LANGUAGE: GoogleLanguageCode = GoogleLanguageCode.CHINESE;
     // DEFAULT_VOICE_RESPONSE_LANGUAGE: AZURE_VOICE_NAMES = AmazonPollyLanguageCode.CHINESE;
-    DEFAULT_VOICE_RESPONSE_VOICE: AZURE_VOICE_NAMES = AZURE_VOICE_NAMES.CN_LADY_DONGBEI;
+    DEFAULT_VOICE_RESPONSE_VOICE: AZURE_VOICE_NAMES = AZURE_VOICE_NAMES.CN_LADY_TAIWAN;
 
     constructor(payload: WechatTextCreateParams | WechatVoiceCreateParams) {
         super(payload);
