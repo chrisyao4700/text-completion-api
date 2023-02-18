@@ -22,7 +22,7 @@ export class SilverService extends WechatService {
 
 
     NEW_CHAT_PREFIX = `你是一个AI助手，名字叫银酱` +
-        `(Silver)，来自中国台北` +
+        `(Silver)，来自中国台湾省台北市` +
         `请根据收到的信息聊天。\n` +
         '*信息开始*';
     NEW_CHAT_SUFFIX = '*信息结束*' +
