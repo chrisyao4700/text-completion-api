@@ -165,8 +165,8 @@ export default abstract class WechatService {
             }
             const responseText = await this.createResponseForText();
             const responseFilePath = await convertTextToSpeech(responseText!,
-                WechatService.DEFAULT_FOLDER_PATH,
                 this.payload.messageId,
+                WechatService.DEFAULT_FOLDER_PATH,
                 this.DEFAULT_VOICE_RESPONSE_VOICE
                );
             await delayReply(1, '');
