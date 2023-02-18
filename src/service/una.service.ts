@@ -1,7 +1,5 @@
 
-import Chat, { ChatInput, ChatOutput } from '../model/chat.model';
-import User from '../model/user.model';
-import { LINE_ROLE } from '../model/line.model';
+
 
 import { GoogleLanguageCode, translateTextEnglishToChinese } from '../util/google';
 import { delayReply, timeDiffMinutes, downloadImageFromURL, deleteFileAtPath, getRandomIntegerFromRange } from '../util/util';
@@ -10,6 +8,7 @@ import { downloadWeChatMedia, sendWechatVideoMessage, sendWeChatMessage, sendWec
 import { convertTextToSpeech, AmazonPollyLanguageCode, AmazonPollyVoiceId } from '../util/amazon';
 import WechatService, { WechatTextCreateParams, WechatVoiceCreateParams } from './wechat.service';
 import { createTextFromPrompt } from '../util/opai';
+import { AZURE_VOICE_NAMES } from '../util/azure';
 
 
 const isChinese = (str: string): boolean => {
@@ -58,8 +57,8 @@ export class UnaService extends WechatService {
     DEFAULT_VOICE_LANGUAGE: GoogleLanguageCode = GoogleLanguageCode.ENGLISH;
     // VIDEO_IDENTIFER = "Video self introduction"
 
-    DEFAULT_VOICE_RESPONSE_LANGUAGE: AmazonPollyLanguageCode = AmazonPollyLanguageCode.ENGLISH;
-    DEFAULT_VOICE_RESPONSE_VOICE: AmazonPollyVoiceId = AmazonPollyVoiceId.JOANNA;
+    // DEFAULT_VOICE_RESPONSE_LANGUAGE: AZURE_VOICE_NAMES = AZURE_VOICE_NAMES.;
+    DEFAULT_VOICE_RESPONSE_VOICE: AZURE_VOICE_NAMES = AZURE_VOICE_NAMES.US_LADY;
 
     constructor(payload: WechatTextCreateParams | WechatVoiceCreateParams) {
         super(payload);
