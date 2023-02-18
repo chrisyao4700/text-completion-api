@@ -5,7 +5,6 @@ import { Logger } from '../util/logger';
 import { LineService, LineGenerateParams , LineGenerateResponse, ChatLinesResponse} from '../service/line.service';
 import { LineOutput } from '../model/line.model';
 
-//   // "dev": "nodemon -x tsoa spec-and-routes",
 @Route('v1/line')
 export class LineController extends Controller {
     /**

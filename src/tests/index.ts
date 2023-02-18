@@ -6,7 +6,8 @@ import {AZURE_VOICE_NAMES, convertTextToSpeech} from '../util/azure';
 const main = (async () => {
 
     const text ="您好，我是银酱，一名基于达芬奇引擎技术的AI助手。我可以帮助您解答各种问题，从学术研究到日常生活的各种疑问。我拥有海量的知识库和先进的自然语言处理技术，可以用自然、流畅的方式与您进行交流，并根据您的需求提供个性化的解答和建议。无论您需要什么帮助，我都会尽我所能，为您提供最好的服务。感谢您选择我作为您的AI助手，我期待与您的交流。";
-    const finalPath = await convertTextToSpeech(text, AZURE_VOICE_NAMES.CN_GIRL_MADARIN,'db/temp/voice',AZURE_VOICE_NAMES.CN_GIRL_MADARIN);
+    const english = "Hello, I'm Silver, an AI assistant based on the DaVinci Engine technology. I can help you answer various questions, from academic research to everyday life inquiries. I have a massive knowledge base and advanced natural language processing technology, allowing me to communicate with you in a natural and fluent way and provide personalized answers and suggestions based on your needs. Whatever help you need, I will do my best to provide you with the best service. Thank you for choosing me as your AI assistant, and I look forward to communicating with you."
+    const finalPath = await convertTextToSpeech(english, AZURE_VOICE_NAMES.US_LADY,'db/temp/voice',AZURE_VOICE_NAMES.US_LADY);
     console.log(finalPath);
     // console.log(isChinese(text));
    
