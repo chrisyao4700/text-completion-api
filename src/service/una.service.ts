@@ -71,8 +71,11 @@ export class UnaService extends WechatService {
     private async reviseEnglishText(): Promise<string> {
         this.payload = this.payload as WechatTextCreateParams;
         if (this.payload.text && this.payload.text.length >= 25) {
-            const prompt = `Please revise the following text:` +
-                `\n${this.payload.text}\n`;
+            const prompt = `Revise the following text:` +
+            `*MESSAGE START*`+
+                `\n${this.payload.text}\n`+
+                `*MESSAGE END*`+
+                `\nPlease directly reply the revised text.`
             const revisedText = await createTextFromPrompt(prompt, this.payload.text, []);
             await sendWeChatMessage(`I revised your last message, do you think this way would be better? <${revisedText}>`, this.payload.userId);
             return revisedText;
@@ -114,8 +117,6 @@ export class UnaService extends WechatService {
                     return sendWeChatMessage(translation, this.payload.userId);
                 })
                 .then();
-
-            console.log('i reached');
             return 'success';
         } catch (error) {
             const errText = wechatResponseBuilder(this.payload, 'Error, please try again later');
