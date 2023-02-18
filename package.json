@@ -43,6 +43,7 @@
         "grammarify": "^2.1.0",
         "http-auth": "^4.2.0",
         "jsonwebtoken": "^9.0.0",
+        "microsoft-cognitiveservices-speech-sdk": "^1.25.1",
         "morgan": "^1.10.0",
         "node-fetch": "^3.3.0",
         "openai": "^3.1.0",

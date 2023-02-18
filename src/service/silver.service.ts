@@ -10,7 +10,7 @@ import { delayReply, timeDiffMinutes, downloadImageFromURL, deleteFileAtPath, ge
 import { downloadWeChatMedia, sendWechatVideoMessage, sendWeChatMessage, sendWechatVoiceMessage, sendWechatImageMessage, uploadWeChatMedia, wechatResponseBuilder, extractStringInsideImageInstruction } from '../util/wechat';
 import { convertTextToSpeech, AmazonPollyLanguageCode, AmazonPollyVoiceId } from '../util/amazon';
 import WechatService, { WechatTextCreateParams, WechatVoiceCreateParams } from './wechat.service';
-
+import { AZURE_VOICE_NAMES } from '../util/azure';
 
 
 export class SilverService extends WechatService {
@@ -48,8 +48,8 @@ export class SilverService extends WechatService {
     VIDEO_IDENTIFER = "视频自我介绍";
 
     DEFAULT_VOICE_LANGUAGE: GoogleLanguageCode = GoogleLanguageCode.CHINESE;
-    DEFAULT_VOICE_RESPONSE_LANGUAGE: AmazonPollyLanguageCode = AmazonPollyLanguageCode.CHINESE;
-    DEFAULT_VOICE_RESPONSE_VOICE: AmazonPollyVoiceId = AmazonPollyVoiceId.ZHIYU;
+    // DEFAULT_VOICE_RESPONSE_LANGUAGE: AZURE_VOICE_NAMES = AmazonPollyLanguageCode.CHINESE;
+    DEFAULT_VOICE_RESPONSE_VOICE: AZURE_VOICE_NAMES = AZURE_VOICE_NAMES.CN_LADY_DONGBEI;
 
     constructor(payload: WechatTextCreateParams | WechatVoiceCreateParams) {
         super(payload);

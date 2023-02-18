@@ -1,13 +1,14 @@
 // import Chat from "../model/chat.model";
 require('dotenv').config();
 
-const isChinese = (str: string): boolean => {
-    return /^[\u4e00-\u9fa5\u3400-\u4DBF\u20000-\u2A6DF\u2A700-\u2B73F\u2B740-\u2B81F\u2B820-\u2CEAF\uF900-\uFAFF\u3000-\u303F\uFF00-\uFFEF]+$/.test(str);
-};
+
+import {convertTextToSpeech} from '../util/azure';
 const main = (async () => {
 
-    const text = "ni你好？？？";
-    console.log(isChinese(text));
+    const text ="您好，我是银酱，一名基于达芬奇引擎技术的AI助手。我可以帮助您解答各种问题，从学术研究到日常生活的各种疑问。我拥有海量的知识库和先进的自然语言处理技术，可以用自然、流畅的方式与您进行交流，并根据您的需求提供个性化的解答和建议。无论您需要什么帮助，我都会尽我所能，为您提供最好的服务。感谢您选择我作为您的AI助手，我期待与您的交流。";
+    const finalPath = await convertTextToSpeech(text, '1231442','db/temp/voice','zh-CN-XiaoshuangNeural');
+    console.log(finalPath);
+    // console.log(isChinese(text));
    
     // try{
     //     const description= '银是一个人工智能机器人，它使用了达芬奇3号引擎，因此能够完成许多任务。银具有高度的语言理解能力和学习能力，可以与用户进行对话，回答问题，执行命令等。它是一个先进的人工智能系统，旨在帮助人们更好地处理信息，提高工作效率。'

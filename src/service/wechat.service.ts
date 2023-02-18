@@ -8,7 +8,8 @@ import { createTextFromPrompt, createImageFromPrompt } from '../util/opai';
 import { delayReply, timeDiffMinutes, downloadImageFromURL, deleteFileAtPath, getRandomIntegerFromRange } from '../util/util';
 
 import { downloadWeChatMedia, sendWechatVideoMessage, sendWeChatMessage, sendWechatVoiceMessage, sendWechatImageMessage, uploadWeChatMedia, wechatResponseBuilder, extractStringInsideImageInstruction } from '../util/wechat';
-import { AmazonPollyLanguageCode, AmazonPollyVoiceId, convertTextToSpeech } from '../util/amazon';
+import { AmazonPollyLanguageCode, AmazonPollyVoiceId } from '../util/amazon';
+import { AZURE_VOICE_NAMES, convertTextToSpeech } from '../util/azure';
 export type ChatCreateParams = Required<ChatInput>;
 
 export type WechatTextCreateParams = {
@@ -46,8 +47,8 @@ export default abstract class WechatService {
 
     abstract ERROR_TEXT: string[];
     abstract DEFAULT_VOICE_LANGUAGE: GoogleLanguageCode;
-    abstract DEFAULT_VOICE_RESPONSE_LANGUAGE: AmazonPollyLanguageCode;
-    abstract DEFAULT_VOICE_RESPONSE_VOICE: AmazonPollyVoiceId;
+    // abstract DEFAULT_VOICE_RESPONSE_LANGUAGE: AZURE_VOICE_NAMES;
+    abstract DEFAULT_VOICE_RESPONSE_VOICE: AZURE_VOICE_NAMES;
     voiceText: string | null;
 
     static DEFAULT_FOLDER_PATH = `db/temp/voice`;
@@ -166,8 +167,8 @@ export default abstract class WechatService {
             const responseFilePath = await convertTextToSpeech(responseText!,
                 WechatService.DEFAULT_FOLDER_PATH,
                 this.payload.messageId,
-                this.DEFAULT_VOICE_RESPONSE_LANGUAGE,
-                this.DEFAULT_VOICE_RESPONSE_VOICE);
+                this.DEFAULT_VOICE_RESPONSE_VOICE
+               );
             await delayReply(1, '');
 
             const responseMediaId = await uploadWeChatMedia(responseFilePath, 'voice', 'audio/mpeg');
